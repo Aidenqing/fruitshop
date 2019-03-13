@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.min.css">
+		<link rel="stylesheet" href="css/swiper.min.css" />
+		<link rel="stylesheet" href="css/public.css" />
+		<!--   通用 -->
+		<script type="text/javascript" src="js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="js/common/vue.min.js"></script>
+		<script type="text/javascript" src="js/common/common.js"></script>
+		<script src="js/common/jweixin-1.2.0.js"></script>
+		<!--<script type='text/javascript' src="./js/api-url.js"></script>-->
+
+
+	</head>
+
+	<body>
+		<div id="app">
+		</div>
+	</body>
+	<script type="text/javascript" src='js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript">
+		// 全局变量
+		var self;
+		new Vue({
+			el: '#app',
+			data: {
+				error: null
+			},
+			created: function() {
+				self = this;
+				self.authFunction();
+			},
+			methods: {
+				authFunction: function() {
+					$.showLoading();
+					//回调页面	
+				
+					let code = common.getUrlParam('code');
+			
+					if(code == null || code.trim().length == 0) {
+					
+						let returnHref = encodeURIComponent(window.location.href);	
+						location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + APPID + "&redirect_uri=" + returnHref + "&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect";
+					} else {
+						
+						//传入code
+						$.ajax({
+							type: "get",
+							url: 'https://wxdshop.com/wxd-fruit/wechat/oauth/openid/'+code,
+							data: {
+
+							},
+							dataType: "json",
+							success: function(data) {
+								// this.setCookie('value') 放入cookie中
+								common.setAuthCookie(data.openid)
+								//跳转回之前的页面
+								let url=common.getUrlParam(RETURNPAGE);
+								if(url==null||url.trim().length==0){
+									window.location='index.html';
+								}else{
+									window.location=url;
+								}
+							}
+						});
+					}
+
+				},
+			}
+		})
+	</script>
+
+</html>

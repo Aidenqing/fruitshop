@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>维喜多外卖</title>
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+	</head>
+
+	<body>
+	<div id="app">
+	<div class="weui-search-bar" id="searchBar">
+		<form class="weui-search-bar__form">
+			<div class="weui-search-bar__box">
+				<i class="weui-icon-search"></i>
+				<input type="search"  class="weui-search-bar__input" id="picker" placeholder="请点击选择城市" required="">
+				<a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+			</div>
+		</form>
+	</div>
+
+	<div class="weui-panel weui-panel_access">
+		<div class="weui-panel__bd" v-for="item in shops">
+			<a :href="item.href" class="weui-media-box weui-media-box_appmsg">
+				<div class="weui-media-box__hd">
+					<img class="weui-media-box__thumb" :src="item.photo">
+				</div>
+				<div class="weui-media-box__bd">
+					<h4 class="weui-media-box__title" v-cloak>{{item.name}}</h4>
+					<p class="weui-media-box__desc" v-cloak>{{item.freightName}}</p>
+					<p class="weui-media-box__desc" v-cloak>{{item.address}}</p>
+				</div>
+				<span class="weui-cell__ft"></span>
+			</a>
+		</div>
+	</div>
+	</div>
+	</body>
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript">
+        $(function() {
+
+            $("#picker").picker({
+                title: "外卖服务已开放的城市",
+                cols: [
+                    {
+                        textAlign: 'center',
+                        values: ['南昌', '九江']
+                    }
+                ],
+                onClose: function(e){
+                	   self.getShops($('#picker').val());
+                }
+            });
+//           $( "#picker" ).change(function() {
+//         self.getShops($('#picker').val());
+//      });
+            //$("#add-shopcart").popup();
+        })
+
+        // 全局变量
+        var self;
+        new Vue({
+            el: '#app',
+            data: {
+                shops:[],
+				location:""
+            },
+            beforeCreate: function(){
+
+            },
+            created: function() {
+                // self.getOrder();
+                self = this;
+             self.getShops("南昌")
+            },
+            methods: {
+                getShops: function(city) {
+                    $.showLoading();
+                    $.get(
+                        baseUrl+"/buyer/shop/byCity/"+city,
+                        function (res) {
+                            if (res.code=200){
+                                let href = '';
+                                var data = res.data;
+                                self.shops = data;
+                                for (var i=0;i<data.length;i++){
+                                    href = "shop_menu.html?shopId="+data[i].id;
+                                    self.shops[i]['href']=href;
+								}
+                                $.hideLoading();
+                            }
+                        }
+                    );
+                },
+            }
+        })
+
+	</script>
+
+</html>

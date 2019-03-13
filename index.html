@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>维喜多果园餐厅</title>
+
+		<link rel="stylesheet" href="css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-weui.min.css">
+		<link rel="stylesheet" href="css/swiper.min.css" />
+		<link rel="stylesheet" href="css/public.css" />
+		<link rel="stylesheet" href="css/index.css" />
+
+		<!--   通用 -->
+		<script type="text/javascript" src="./js/common/jquery-2.1.0.js"></script>
+
+		<script type="text/javascript" src="./js/common/vue.min.js"></script>
+
+		<!--		<script type="text/javascript" src="https://unpkg.com/vue@2.1.4/dist/vue.js"/>
+-->
+		<script type="text/javascript" src="./js/common/common.js"></script>
+		<script src="./js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="./js/api-url.js"></script>
+		<!-- 插件相关 -->
+		<script src="js/common/jquery.marquee.js"></script>
+		<script src="js/common/swiper.jquery.min.js" type="text/javascript" charset="utf-8"></script>		<style>
+			.weui-search-bar {
+				padding: 8px 0.5rem;
+			}
+			
+			.recommend-items,
+			.function-items {
+				padding-top: 1rem;
+				background-color: #fff;
+				display: flex;
+			}
+			
+			.function-items .item {
+				display: inline-block;
+				text-align: center;
+				width: 25%;
+				color: #0d0d0d;
+			}
+			
+			.function-items img {
+				width: 73%;
+				height: 73%;
+				border-radius: 50%;
+			}
+			
+			.function-items .name {
+				font-size: 14px;
+			}
+			
+			.recommend-items .item {
+				width: 33.33333333333333%;
+				padding: 2px 5px;
+				position: relative;
+				text-align: center;
+			}
+			
+			.recommend-items .item .des {
+				position: absolute;
+				width: 100%;
+				color: white;
+			}
+			
+			.recommend-items img {
+				width: 100%;
+				height: 80%;
+				border-radius: 5px;
+			}
+			
+			.category-items {
+				background: #fff;
+			}
+			
+			.category-items .item {
+				margin-bottom: 5px;
+			}
+			
+			.category-items .top {
+				padding: 0.5rem 8px;
+			}
+			
+			.category-items .category-name {
+				font-weight: bolder;
+				padding-right: 0.2rem;
+			}
+			
+			.category-items .category-desc {
+				font-size: 12px;
+			}
+			
+			.category-icon {
+				width: 100%;
+			}
+			
+			.category-items .goods {
+				font-size: 12px;
+				display: -webkit-box;
+				overflow-x: auto;
+				-webkit-overflow-scrolling: touch;
+			}
+			
+			.category-items .good {
+				text-align: center;
+				width: 25%;
+				display: block;
+				color: black;
+			}
+			
+			.good-icon {
+				width: 75px;
+				height: 75px;
+				border-radius: 50%;
+			}
+			
+			.good .price {
+				color: #f44;
+				font-weight: bold;
+			}
+			
+			.proclass-items {
+				height: 2.5rem;
+				margin: 1px 0;
+				background: #fff;
+				font-size: 14px;
+			}
+			
+			.proclass-items .item {
+				display: inline-block;
+				width: 25%;
+				text-align: center;
+				height: 2rem;
+				line-height: 2rem;
+			}
+			
+			.proclass-items .active {
+				color: red;
+				border-bottom: 2px solid;
+			}
+			
+			.prolist-items {
+				background: #fff;
+				padding-top: 1rem;
+			}
+			
+			.prolist-items .good-icon {
+				width: 80px;
+				height: 80px;
+			}
+			
+			.prolist-items .item {
+				position: relative;
+				height: 100px;
+				border: 1px solid #f5f1f1;
+				margin: 10px 5px;
+				border-radius: 5px;
+				display: flex;
+				align-items: center;
+			}
+			
+			.prolist-items .item a {
+				display: flex;
+				color: black;
+				width: 80%;
+			}
+			
+			.prolist-items .item a .info {
+				display: flex;
+				flex-direction: column;
+				font-size: 14px;
+				color: #f44;
+				padding-left: 10px;
+			}
+			
+			.prolist-items .name {
+				height: 48px;
+				overflow: hidden;
+				color: black;
+			}
+			
+			.prolist-items .price {
+				padding-left: 100px;
+				color: #f44;
+				position: relative;
+				display: flex;
+				justify-content: space-between;
+				padding-right: 1rem;
+			}
+			
+			.prolist-items .price>img {}
+			
+			#app {
+				overflow-x: hidden;
+			}
+			.left-icon{
+			  	position: absolute;
+    			display: inline-block;
+				 height: 22.5px;
+				min-width: 20px;
+				padding-top: 1px;
+   				z-index: 1000;
+    			float: left;
+				background-color: #fff7cc;
+    		}
+			.left-icon img {
+     			 width: 16px;
+    			 height: 16px;
+			}
+			.marquee {
+				width: 100%;
+				overflow: hidden;
+				background-color: #fff7cc;
+				color: #f85;
+     			margin-left: 20px;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div id="app" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);" v-cloak>
+			<div class="header">
+				<div class="banner">
+					<div class="swiper-container">
+
+						<div class="swiper-wrapper" id="lbt">
+							<div class="swiper-slide" v-for="item in sliderData"  >
+								<a v-bind:href="item.navurl"><img v-bind:src="item.imgurl"   /></a>
+							</div>
+
+						</div>
+						<!-- 如果需要分页器 -->
+						<!--<div class="swiper-pagination"></div>-->
+						<!-- 如果需要导航按钮 -->
+						<!--<div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>-->
+						<!-- 如果需要滚动条 -->
+						<!--<div class="swiper-scrollbar"></div>-->
+					</div>
+				</div>
+			</div>
+			<div class="content">
+				<!--描述：搜索 -->
+				<div class="left-icon"><img src="./img/guangbo.png"></div>
+				<div class='marquee' id="notice">
+				</div>
+
+				<div class="function-items">
+					<a v-bind:href="item.href" class="item" v-for="item in functionData"  >
+						<img v-bind:src="item.icon" />
+						<div class="name" >
+							{{item.name}}
+						</div>
+					</a>
+				</div>
+				<!--	特别推薦活動-->
+				<div class="recommend-items">
+					<a v-bind:href="item.pro_href" class="item" v-for="item in recommendData"  >
+						<div class="des"  >
+							{{item.des}}
+						</div>
+						<img v-bind:src="item.icon" />
+					</a>
+				</div>
+				<!--	推薦活動-->
+				<div class="category-items">
+					<div class="item" v-for="item in categoryData"  >
+						<div class="top">
+							<span class="category-name"  >
+							{{item.category}}
+						</span>
+							<span class="category-desc"  >
+							{{item.desc}}
+						</span>
+						</div>
+						<a v-bind:href="item.categoryUrl"><img v-bind:src="item.imgUrl" class="category-icon" />
+						</a>
+						<div class="goods">
+							<a v-bind:href="good.href" class="good" v-for="good in item.goods">
+								<img class="good-icon" v-bind:src="good.iconImg" />
+								<div class="name"  >
+									{{good.name.length>4? (good.name.substring(0,4)+"..."):good.name}}
+								</div>
+								<div class="price"  >
+									￥{{good.price}}
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+				<!--	4种分类-->
+				<div class="proclass-items" id="proclass-items">
+					<div v-for="(item,index) in proclassData" class="item" v-bind:class="{active: index==0}"  >
+						{{item.name}}
+					</div>
+				</div>
+				<div class="prolist-items">
+					<div class="item" v-for="item in proListData"  >
+						<a v-bind:href="item.href">
+							<img class="good-icon" v-bind:src="item.iconImg"  />
+							<div class="info">
+
+								<span class="name"  >{{item.name}}</span>
+								<span  >￥{{item.price}}</span>
+							</div>
+
+						</a>
+						<img class="shopcart" src="img/shopcart.png" v-on:click.stop="showCart(item.id)" />
+					</div>
+					<a href="main/category/category.html" v-show="proListData.length>0">
+						<img src="img/more.jpg" style="width: 100%;" />
+					</a>
+				</div>
+				<div id="right-icon" class="js-right-icon no-text">
+					<div class="js-right-icon-container right-icon-container clearfix" style="width: 50px;">
+						<a id="global-cart" href="./main/shopcart/shopcart.html" class="icon s3" style="">
+							<p class="icon-img"></p>
+						</a>
+						<a class="js-show-more-btn icon show-more-btn hide"></a>
+					</div>
+				</div>
+				<!--	购物车弹框-->
+
+				<div id="add-shopcart" class="weui-popup__container popup-bottom">
+					<div class="weui-popup__overlay"></div>
+					<div class="weui-popup__modal">
+						<div class="product">
+							<img v-bind:src="product.iconImg" />
+							<div class="name"  >
+								{{product.name}}
+							</div>
+							<img src="img/close.png" class="close" style="width: 30px;height: 30px;">
+							<div class="price"  >
+								￥{{product.price}}
+							</div>
+						</div>
+						<div class="details">
+							<!--	<div class="detail">
+								<div class="single-entry">
+									<div class="entry">
+										起送量:
+									</div>
+									<span class="item">
+								{{product.startmete}}
+							</span>
+								</div>
+								<div class="single-entry">
+									<div class="entry">
+										配送时效:
+									</div>
+									<span class="item">
+								{{product.conveytime}}
+							</span>
+								</div>
+								<div class="single-entry">
+									<div class="entry">
+										规格:
+									</div>
+									<span class="item">
+								{{product.norm}}
+							</span>
+								</div>
+							</div>
+							-->
+							<div class="product-num">
+								<div class="buy">
+									购买数量：
+								</div>
+								<span id="leftnum">
+								剩余<span id="amount"  >{{product.stock}}</span>件
+								</span>
+								<div class="operation">
+									<div id="jian" class="noneactive">
+										-
+									</div>
+									<div id="count">
+										1
+									</div>
+									<div id="jia">
+										+
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="weui-tabbar">
+							<div class="weui-tabbar__item actionadd">
+								<!--<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>
+						 -->
+								<p class="weui-tabbar__label" v-on:click.stop="addCart()">加入购物车</p>
+							</div>
+							<div class="weui-tabbar__item actionbuy">
+								<p class="weui-tabbar__label" v-on:click.stop="gotoNext()">立即购买</p>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src='./js/common/jquery-weui.min.js'></script>
+
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+			common.jianClick();
+			common.jiaClick();
+			common.closeClick();
+		})
+
+		// 全局变量
+		var self;
+		let openid = common.getOpenId();
+		var vm = new Vue({
+			el: '#app',
+			data: {
+				product: {
+
+				},
+				sliderData: [
+
+				],
+				functionData: [
+
+				],
+				recommendData: [
+
+				],
+				categoryData: [
+
+				],
+				proclassData: [],
+				proListData: [
+
+				],
+
+				error: null
+			},
+			beforeCreate: function(){
+			},
+			created: function() {
+				self = this;				
+					self.getLunbotuDate();
+					self.getFunctionDate();
+					self.getRecommendData();
+					self.getategoryData();
+					self.getProclassData();
+					self.share();
+					self.getNotice();
+			},
+			methods: {
+				getNotice:function () {
+					$.get(baseUrl+"/buyer/module/notice/0",
+						function (res) {
+					    if(res.code==200){
+					        $("#notice").html(res.data[0].notice);
+                            $('.marquee').marquee({
+                                duration: 5000
+                            });
+						}
+                    });
+                },
+				addCart: function() {
+					let count = Number($("#count").text());
+					let pro = vm.product;
+					$.ajax({
+						type: "post",
+						url: baseUrl + '/buyer/cart/create',
+						data: JSON.stringify({
+							'productIcon': pro.iconImg,
+							'productId': pro.id,
+							'productName': pro.name,
+							'productPrice': pro.price,
+							'productQuantity': count
+						}),
+						dataType: "json",
+						contentType: "application/json;charset=UTF-8",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							} else {
+								$.closePopup();
+								$.toast("添加购物车成功", 500);
+							}
+						}
+
+					})
+				},
+                gotoNext: function(){
+                    let count = Number($("#count").text());
+                    let pro = vm.product;
+                    location.href='./main/order/order.html?pid='+pro.id+'&pnum='+count+'&freightId=2';
+                },
+				showCart: function(id) {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/product/basic/' + id,
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let source = data.data[0];
+							let product = {};
+							product['id'] = source.id;
+							product['name'] = source.productName.length > 15 ? (source.productName.substring(0, 15) + '...') : source.productName;
+							product['iconImg'] = source.productIcon;
+							product['stock'] = source.productStock;
+							product['price'] = source.productPrice;
+							self.product = product;
+							$("#add-shopcart").popup();
+						}
+					});
+
+				},
+				//轮播图数据
+				getLunbotuDate: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/module/type/1',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let sliderData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['imgurl'] = source[i].moduleImg;
+								eledata['navurl'] = source[i].moduleUrl;
+								// console.log(eledata)
+								sliderData.push(eledata);
+							}
+							self.sliderData = sliderData;
+							self.$nextTick(function() {
+								common.loadSlide();
+							});
+						}
+					});
+				},
+				//小列表数据数据
+				getFunctionDate: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/module/type/2',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let functionData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['name'] = source[i].moduleName;
+								eledata['icon'] = source[i].moduleImg;
+								eledata['href'] = source[i].moduleUrl;
+								// console.log(eledata)
+								functionData.push(eledata);
+							}
+							self.functionData = functionData;
+
+						}
+					});
+				},
+				//3个特别推荐数据
+				getRecommendData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/module/type/3',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let recommendData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['icon'] = source[i].moduleImg;
+								eledata['href'] = source[i].moduleUrl;
+								eledata['des'] = source[i].moduleName;
+								eledata['pro_href'] = './main/category/category-fenqu.html?id='+source[i].id;
+								//console.log(eledata)
+
+								recommendData.push(eledata);
+							}
+							self.recommendData = recommendData;
+
+						}
+					});
+				},
+				//类似特色专题
+				getategoryData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/module/type/5',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let categoryData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['category'] = source[i].moduleName;
+								eledata['categoryUrl'] = source[i].moduleUrl;
+								eledata['imgUrl'] = source[i].moduleImg;
+								let goods = [];
+								let gooddata = source[i].goods;
+								for(let j = 0; j < gooddata.length; j++) {
+									let good = {};
+									good['name'] = gooddata[j].productName;
+									good['iconImg'] = gooddata[j].productIcon;
+									good['price'] = gooddata[j].productPrice;
+									good['href'] = "./main/product/product.html?id="+ gooddata[j].id;
+									goods.push(good);
+								}
+								eledata['goods'] = goods;
+								categoryData.push(eledata);
+							}
+
+							self.categoryData = categoryData;
+
+						}
+					});
+				},
+
+				//橱窗栏
+				getProclassData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/shopwindow/all',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let proclassData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['name'] = source[i].windowName;
+								let goods = [];
+								let gooddata = source[i].goods;
+								for(let j = 0; j < gooddata.length; j++) {
+									let good = {};
+									good['name'] = gooddata[j].productName;
+									good['iconImg'] = gooddata[j].productIcon;
+									good['price'] = gooddata[j].productPrice;
+									good['id'] = gooddata[j].id;
+									good['href'] = "main/product/product.html?id=" + gooddata[j].id;
+									goods.push(good);
+								}
+								eledata['goods'] = goods;
+								proclassData.push(eledata);
+							}
+
+							self.proclassData = proclassData;
+							self.proListData = proclassData[0].goods;
+							self.$nextTick(function() {
+								index.proClassClik();
+
+							});
+						}
+					});
+				},
+
+                share:function () {
+                    $.get(baseUrl+"/wechat/sdk/getSignature?url="+window.location.href,
+                        function (res) {
+                            if(res.code==200){
+                                //权限验证信息
+                                wx.config({
+                                    debug: false,
+                                    appId: res.data[0].appId,
+                                    timestamp: res.data[0].timestamp,
+                                    nonceStr: res.data[0].nonceStr,
+                                    signature: res.data[0].signature,
+                                    jsApiList: [
+                                        // 所有要调用的 API 都要加到这个列表中
+                                        'onMenuShareAppMessage' //  分享到朋友接口
+                                    ]
+                                });
+                                wx.ready(function () {
+                                    // 微信分享的数据
+                                    var shareData = {
+                                        "imgUrl": wechatUrl+"fruitshop/img/clogo.jpeg",    // 分享显示的缩略图地址  ----要添加！！！
+                                        "link": window.location.href,    // 分享地址
+                                        "desc": "水果、饮品、干果、特产、简餐、私厨..你想要的都在这里...",   // 分享描述
+                                        "title": "维喜多果园餐厅等你来~",   // 分享标题
+                                        success: function () {
+                                            //分享成功后做相应的数据处理
+                                            $.toast("感谢您的分享！",1000);
+                                            if (openid!=""){
+                                                $.get(
+                                                    baseUrl + '/wechat/sdk/shareSuccess/'+openid,
+                                                    function (content) {
+
+                                                    }
+                                                )
+                                            }else {
+                                                alert("亲爱的果友，您还未授权或者未关注我们，所以不能领取分享奖励哦！")
+                                            }
+
+                                        }
+                                    };
+                                    wx.onMenuShareAppMessage(shareData);
+                                });
+                                wx.error(function (res) {
+                                })
+                            }
+                        });
+                },
+			},
+
+		})
+
+		var index = {
+			proClassClik: function() {
+				$(".proclass-items .item").on('click', function(e) {
+					console.log(e.currentTarget.id);
+					$(".proclass-items .item").removeClass("active");
+					$(this).addClass("active");
+
+					$(".proclass-items .item").each(function(index) {
+						if($(this).hasClass('active')) {
+							vm.proListData = vm.proclassData[index].goods;
+
+							return false;
+						}
+					});
+				});
+			},
+
+		}
+	</script>
+
+</html>

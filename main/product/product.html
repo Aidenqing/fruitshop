@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>商品详情</title>
+
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<!--   通用 -->
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<!-- 插件相关 -->
+<script src="../../js/common/swiper.jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<style>
+			.weui-search-bar {
+				padding: 8px 0.5rem;
+			}
+			
+			.info {
+				background: white;
+				padding: 10px 18px;
+				margin: 5px 0;
+			}
+			
+			.info div {
+				margin: 5px 0;
+			}
+			
+			.info .price {
+				color: #f44;
+				font-size: 18px;
+			}
+			
+			.info .item {
+				display: flex;
+				justify-content: space-between;
+				font-size: 12px;
+			}
+			
+			.pdetail {
+				padding: 10px 18px;
+				background: white;
+			}
+			
+			.pdetail .title {
+				text-align: center;
+				border-bottom: 1px solid #FF4444;
+				color: #FF4444;
+			}
+			
+			.bottom .weui-tabbar__label {
+				font-size: 10px;
+				color: black;
+			}
+			
+			.bottom .weui-tabbar {
+				z-index: 10;
+			}
+			
+			.bottom .weui-tabbar__item {
+				padding: 0;
+				height: 50px;
+				line-height: 50px;
+			}
+			
+			.bottom .location {
+				color: black;
+				font-size: 8px;
+				border-right: 1px solid #a3a3a3;
+				width: 15%;
+			}
+			
+			.bottom .popup {
+				font-size: 14px;
+			}
+			
+			.bottom {
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+			}
+			
+			.bottom a {
+				position: fixed;
+				bottom: 0;
+			}
+			
+			.bottom .actionbuy {
+				right: 0;
+				width: 35%;
+			}
+			
+			.bottom .actionadd {
+				right: 35%;
+				width: 35%;
+			}
+			
+			.bottom .gouwuche {
+				right: 70%;
+				color: black;
+				font-size: 10px;
+				text-align: center;
+				width: 15%;
+			}
+			
+			.bottom .index {
+				font-size: 10px;
+				right: 85%;
+				border-right: 1px solid #CCCCCC;
+				text-align: center;
+				width: 15%;
+			}
+			
+			.bottom img {
+				width: 25px;
+				height: 25px;
+				vertical-align: bottom;
+			}
+			.action-span{
+				display: inline-block;
+				float: right;
+			}
+			.action-span img{
+				width: 25px;
+				height: 25px;
+			}
+			.more-sale .item{
+				font-size: 12px;
+				width: 32.3333%;
+				margin-right: 1%;
+				color: black;
+			}
+			.more-sale{
+				margin-bottom: 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="product">
+			<div class="header">
+				<div class="banner">
+					<div class="swiper-container">
+
+						<div class="swiper-wrapper" id="lbt">
+							<div class="swiper-slide" v-for="item in sliderData">
+								<a v-bind:href="item.navurl" v-cloak><img v-bind:src="item.imgurl" /></a>
+							</div>
+
+						</div>
+						<!-- 如果需要分页器 -->
+						<!--	<div class="swiper-pagination"></div>-->
+						<!-- 如果需要导航按钮 -->
+						<!--<div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>-->
+						<!-- 如果需要滚动条 -->
+						<!--<div class="swiper-scrollbar"></div>-->
+					</div>
+				</div>
+			</div>
+			<div class="content">
+				<div class="info">
+					<div class="name" v-cloak>
+						{{product.name}}
+					</div>
+					<div class="price" v-cloak>
+						<span>￥{{product.price}}</span>
+					<span class="action-span">
+						<span v-cloak v-on:click="collect"><img src="../../img/collection.png" id="share_img"></span>
+					</span>
+					</div>
+					<div class="item" v-cloak>
+						<span>
+						运费：0~10元
+					</span>
+						<span v-cloak>
+						库存：{{product.stock}}
+					</span>
+						<span v-cloak>
+						销量：{{product.sale}}
+					</span>
+					</div>
+					<div class="baoyou-item" v-cloak>
+						<span class="baoyou">包邮</span>{{product.conveycost}}
+					</div>
+				</div>
+
+				<div class="pdetail">
+					<div class="title">
+						商品详情
+					</div>
+					<div class="coupons">
+						<div class="coupon-item" v-for="(item,index) in couponData" v-bind:class="{getted:item.status==2||item.status==3 }" v-on:click.stop="getCoupon(item.id,item.status,index)">
+							<div class="value" v-cloak>
+								<span>￥</span>{{item.cashCoupon}}<span class="status">{{item.receive}}</span>
+							</div>
+							<div class="desc" v-cloak>
+								{{item.discountName}}
+							</div>
+						</div>
+					</div>
+					<div class="hot-sale">
+						<p>热卖推荐</p>
+						<div class="items">
+							<a v-bind:href="item.href" class="item product" v-for="item in hotsaleData">
+
+								<div class="goodimg">
+									<img v-bind:src="item.productIcon" />
+								</div>
+								<div class="name" v-cloak>
+									{{item.productName}}
+								</div>
+								<div class="price" v-cloak>
+									￥{{item.productPrice}}
+								</div>
+							</a>
+						</div>
+					</div>
+					<div id="detail-content">
+
+					</div>
+					<div class="more-sale">
+						<p>更多推荐</p>
+						<div class="items">
+							<a v-bind:href="item.href" class="item product" v-for="item in moresaleData">
+
+								<div class="goodimg">
+									<img v-bind:src="item.productIcon" />
+								</div>
+								<div class="name" v-cloak>
+									{{item.productName.length>6? (item.productName.substring(0,6)+"..."):item.productName}}
+								</div>
+								<div class="price" v-cloak>
+									￥{{item.productPrice}}
+								</div>
+							</a>
+						</div>
+					</div>
+					<div id="erweima" style="padding-bottom: 30px;text-align: center;" v-show="guanzhu==0">
+						<img src="../../img/qr.jpg" style="width: 80%;height: 80%;">
+						<p style="padding-bottom: 10px;">扫一扫，享受更多优质服务！</p>
+					</div>
+				</div>
+				<div class="bottom">
+
+					<a href="../../index.html" class="index">
+						<div class="">
+							<img src="../../img/index.png" alt="">
+						</div>
+						<div class="weui-tabbar__label">首页</div>
+
+					</a>
+					<a href="../shopcart/shopcart.html" class="gouwuche">
+						<!--					<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>
+-->
+						<div class="">
+							<img src="../../img/cart.png" alt="">
+						</div>
+						<div>购物车</div>
+					</a>
+					<a href="javascript:;" class="weui-tabbar__item actionadd  popup" v-on:click="popShow(0)">
+
+						加入购物车
+					</a>
+					<a href="javascript:;" class="weui-tabbar__item actionbuy  popup" v-on:click="popShow(1)">
+
+						立即购买
+					</a>
+
+				</div>
+				<!--	购物车弹框-->
+				<div id="add-shopcart" class="weui-popup__container popup-bottom">
+					<div class="weui-popup__overlay"></div>
+					<div class="weui-popup__modal">
+						<div class="product">
+							<img v-bind:src="product.iconImg" />
+							<div class="name">
+								{{product.sname}}
+							</div>
+							<img src="../../img/close.png" class="close" style="width: 30px;height: 30px;">
+							<div class="price">
+								￥{{product.price}}
+							</div>
+						</div>
+						<div class="details">
+
+							<div class="product-num">
+								<div class="buy">
+									购买数量：
+								</div>
+								<span id="leftnum">
+								剩余<span id="amount">{{product.stock}}</span>件
+								</span>
+								<div class="operation">
+									<div id="jian">
+										-
+									</div>
+									<div id="count">
+										1
+									</div>
+									<div id="jia">
+										+
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<!--<div id="actions">
+						<div class="action-add">
+							立即购买
+						</div>
+						<div class="action-buy">
+							加入购物车
+						</div>
+					</div>-->
+						<div class="weui-tabbar">
+							<div class="weui-tabbar__item actionadd" v-bind:class="{'hide': showAddCart}">
+								<p class="weui-tabbar__label" v-on:click.stop="addCart()">加入购物车</p>
+							</div>
+							<div class="weui-tabbar__item actionbuy" v-bind:class="{'hide': !showAddCart}">
+								<p class="weui-tabbar__label" v-on:click.stop="gotoNext()">下一步</p>
+						    </div>
+						</div>
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+			common.jianClick();
+			common.jiaClick();
+			common.closeClick();
+		})
+
+		// 全局变量
+		var self;
+		var openid;
+		var product = new Vue({
+			el: '#product',
+			data: {
+				showAddCart: false,
+				product: {
+				},
+				sliderData: [],
+				couponData: [],
+				hotsaleData:[],
+				moresaleData:[],
+				guanzhu:1,
+				error: null
+			},
+			beforeCreate: function(){
+				openid = common.getOpenId();
+			},
+			created: function() {
+				self = this;
+				self.getProductData();
+				self.getCouponData();
+				self.getHotsaleData();
+                self.isCollected(common.getUrlParam("id"));
+                self.getMoreProduct();
+                self.isguanzhu();
+            },
+			methods: {
+			 //购买下一步
+			    gotoNext: function(){
+                    if(self.product.productStatus == 0){
+                        $.toast("商品已下架", "forbidden");
+                        return;
+                    }
+					let count = Number($("#count").text());
+					let pro = product.product;
+					location.href='../order/order.html?pid='+pro.id+'&pnum='+count+'&freightId='+self.product.freightId;
+
+			    },
+			 //加入购物车
+			    addCart: function(){
+                    if(self.product.productStatus == 0){
+                        $.toast("商品已下架", "forbidden");
+                        return;
+                    }
+					let count = Number($("#count").text());
+					let pro = product.product;
+					$.ajax({
+						type: "post",
+						url: baseUrl + '/buyer/cart/create',
+						data: JSON.stringify({
+							'productIcon':pro.iconImg,
+							'productId':pro.id,
+							'productName':pro.name,
+							'productPrice':pro.price,
+							'productQuantity':count
+						}),
+						dataType:"json",
+						contentType:"application/json;charset=UTF-8",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							  }else{
+								self.showAddCart = false;
+								$.closePopup();
+								$.toast("添加购物车成功", "text");
+							  }
+							}
+
+						})
+			    },
+				popShow: function(val) {
+
+					if(val == true) {
+						self.showAddCart = true;
+					} else {
+						self.showAddCart = false;
+					}
+
+					$("#add-shopcart").popup();
+				},
+
+				getProductData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/product/detail/' + common.getUrlParam("id"),
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let source = data.data[0];
+							let sliderData = [];
+							let sliderOrigin = source.productImgDTOS;
+							for(var i = 0; i < sliderOrigin.length; i++) {
+								let slider = {};
+								slider['imgurl'] = sliderOrigin[i].imgUrl;
+								sliderData.push(slider);
+							}
+							if(source.productStatus == 0){
+                                $.toast("商品已下架", "forbidden");
+                            }
+							self.sliderData = sliderData;
+
+							let product = {};
+							product['id'] = source.id;
+							product['name'] = source.productName;
+
+							product['sname'] = source.productName.length > 15 ? (source.productName.substring(0, 15) + '...') : source.productName;
+
+							product['iconImg'] = source.productIcon;
+							product['stock'] = source.productStock;
+							product['price'] = source.productPrice;
+							product['sale'] = source.salesVolume;
+							product['conveycost'] = source.freight.name;
+							product['freightId']=source.freightId;
+							product['productStatus']=source.productStatus;
+
+							self.product = product;
+
+							$('#detail-content').empty();
+							$('#detail-content').append(source.productDescription)
+							self.$nextTick(function() {
+								common.loadSlide();
+
+							});
+							document.title = self.product.sname;
+							self.share();
+						}
+					});
+
+				},
+				getCoupon: function(id,status,index) {
+					if(status==2){
+						$.toast("优惠券已失效", "");
+						return;
+					}
+						if(status==3){
+						$.toast("已领取", "");
+						return;
+					}
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/discount/receive/'+id,
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							$.toast("领取成功");
+							self.couponData[index].status=3;
+							self.couponData[index].receive='已领取';
+							//self.getCouponData();
+							
+
+						}
+					});
+
+				},
+				getHotsaleData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/product/hot',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let source = data.data;
+							let hotsaleData = [];
+							for(var i = 0; i < source.length; i++) {
+								let item = {};
+								item['productIcon'] = source[i].productIcon;
+								item['productPrice'] = source[i].productPrice;
+								let name=source[i].productName;
+								item['productName'] = name.length>6?
+								(name.substring(0,6)+"...") : name;
+								item['href'] = 'product.html?id=' + source[i].id;
+								hotsaleData.push(item);
+							}
+							self.hotsaleData = hotsaleData;
+
+						}
+					});
+
+				},
+				getMoreProduct:function () {
+					$.get(baseUrl + '/buyer/product/more/'+common.getUrlParam("id"),
+						function (res) {
+                         
+                            let data=res.data;
+                           
+                            for(let i=0;i<data.length;i++){
+                            	data[i]['href'] = 'product.html?id=' + data[i].id;
+                            }
+                               self.moresaleData = res.data;
+                    });
+                },
+				getCouponData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/discount/product/discount',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+
+							self.couponData = data.data;
+
+							self.$nextTick(function() {
+								//common.loadSlide();
+
+							});
+						}
+					});
+
+				},
+                share:function () {
+                    $.get(baseUrl+"/wechat/sdk/getSignature?url="+window.location.href,
+                        function (res) {
+                            if(res.code==200){
+                                //权限验证信息
+                                wx.config({
+                                    debug: false,
+                                    appId: res.data[0].appId,
+                                    timestamp: res.data[0].timestamp,
+                                    nonceStr: res.data[0].nonceStr,
+                                    signature: res.data[0].signature,
+                                    jsApiList: [
+                                        // 所有要调用的 API 都要加到这个列表中
+                                        'onMenuShareAppMessage' //  分享到朋友接口
+                                    ]
+                                });
+                                wx.ready(function () {
+                                    // 微信分享的数据
+                                    var shareData = {
+                                        "imgUrl": self.product.iconImg,    // 分享显示的缩略图地址  ----要添加！！！
+                                        "link": window.location.href,    // 分享地址
+                                        "desc": "这里有美食，你有酒吗？我在这里等你，等你把我带回家~",   // 分享描述
+                                        "title": self.product.sname,   // 分享标题
+                                        success: function () {
+                                            //分享成功后做相应的数据处理
+                                            if (openid!=""){
+                                                $.get(
+                                                    baseUrl + '/wechat/sdk/shareSuccess/'+openid,
+                                                    function (content) {
+
+                                                    }
+                                                )
+                                            }else {
+                                                alert("亲爱的果友，您还未授权或者未关注我们，所以不能领取分享奖励哦！")
+                                            }
+
+                                        }
+                                    };
+                                    wx.onMenuShareAppMessage(shareData);
+                                });
+                                wx.error(function (res) {
+                                })
+                            }
+                        });
+                },
+				collect:function () {
+					$.get(baseUrl+"/buyer/product/collect/"+common.getUrlParam("id"),
+					function (res) {
+					    if (res.code==200){
+					        if(res.data.length!=0){
+					            $("#share_img").attr("src","../../img/collected.png")
+								$.toast("已收藏",1000)
+							}else {
+                                $("#share_img").attr("src","../../img/collection.png")
+                                $.toast("呜呜呜~",1000)
+                            }
+						}
+
+                    })
+                },
+
+                isCollected:function (id) {
+                    $.get(baseUrl+"/buyer/product/isCollected/"+id,
+                        function (res) {
+                            if (res.code==200){
+                                if(res.data.length!=0){
+                                    $("#share_img").attr("src","../../img/collected.png")
+                                }else {
+                                    $("#share_img").attr("src","../../img/collection.png")
+                                }
+                            }
+
+                        })
+                },
+
+				isguanzhu:function () {
+					$.get(baseUrl+"/buyer/vipMember/isgaunzhu",
+						function (res) {
+					    if(res.code==200){
+					        if(res.data.length==0){
+                                self.guanzhu = 0;
+                            }
+						}
+
+                    });
+                },
+
+			}
+		})
+	</script>
+
+</html>

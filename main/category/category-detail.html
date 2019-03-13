@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>维喜多果园餐厅</title>
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+		<link rel="stylesheet" href="../../css/index.css" />
+
+
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<script src="../../js/common/jquery.marquee.js"></script>
+		<script type="text/javascript" src="js/common/swiper.jquery.min.js"></script>
+		<style>
+			.category-items {}
+			
+			.titleImg img {
+				width: 96%;
+				height: 100%;
+			}
+			.titleImg {
+				text-align: center;
+				height: 250px;
+			}
+			.product-itmes {
+				font-size: 14px;
+				margin: 0 5px;
+			}
+			
+			.product-itmes .iconImg img {
+				width: 96%;
+    			border-radius: 5px;
+			}
+			
+			.product-itmes .item {
+				width: 50%;
+				display: inline-block;
+				text-align: center;
+			}
+			
+			.product-itmes .item>div {
+				margin: 5px;
+				background-color: white;
+				padding-top: 2px;
+    			border-radius: 5px;
+			}
+			
+			.product-itmes .price {
+				display: flex;
+				justify-content: space-between;
+				margin: 3px 1px 5px 0;
+				font-size: 16px;
+				color: #f44;
+				padding: 0 2px;
+                padding-bottom: 5px;
+			}
+			
+			.product-itmes .name {
+				text-align: center;
+				height: 44px;
+				overflow: hidden;
+				color: black;
+			}
+			.left-icon{
+				position: absolute;
+				display: inline-block;
+				height: 22.5px;
+				min-width: 20px;
+				padding-top: 1px;
+				z-index: 1000;
+				float: left;
+				background-color: #fff7cc;
+			}
+			.left-icon img {
+				width: 16px;
+				height: 16px;
+			}
+			.marquee {
+				width: 94%;
+				overflow: hidden;
+				background-color: #fff7cc;
+				color: #f85;
+				margin-left: 20px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="dcategory" style="-webkit-tap-highlight-color: rgba(0, 0, 0, 0);">
+			<div class="content">
+				<div class="titleImg" >
+					<img v-bind:src="titleImg"  v-cloak/>
+				</div>
+				<div class="left-icon"><img src="../../img/guangbo.png"></div>
+				<div class='marquee' id="notice">
+				</div>
+				<div class="product-itmes">
+					<div class="item" v-for="item in goods">
+						<div>
+
+							<a v-bind:href="item.href">
+								<div class="iconImg">
+									<img v-bind:src="item.iconImg" />
+								</div>
+								<div class="name" v-cloak>
+									{{item.name}}
+								</div>
+							</a>
+
+							<div class="price">
+								<span id="" v-cloak>
+								￥{{item.price}} 
+							</span><img src="../../img/shopcart.png" class="shopcart" v-on:click.stop="showCart(item.id)"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="right-icon" class="js-right-icon no-text">
+				<div class="js-right-icon-container right-icon-container clearfix" style="width: 50px;">
+					<a id="global-cart" href="../shopcart/shopcart.html" class="icon s3" style="">
+						<p class="icon-img"></p>
+					</a>
+					<a class="js-show-more-btn icon show-more-btn hide"></a>
+				</div>
+			</div>
+			<!--购物车-->
+			<div id="add-shopcart" class="weui-popup__container popup-bottom">
+				<div class="weui-popup__overlay"></div>
+				<div class="weui-popup__modal">
+					<div class="product">
+						<img v-bind:src="product.iconImg" />
+						<div class="name" v-cloak>
+							{{product.name}}
+						</div>
+						<img src="../../img/close.png" class="close" style="width: 30px;height: 30px;">
+						<div class="price" v-cloak>
+							￥{{product.price}}
+						</div>
+					</div>
+					<div class="details">
+				
+						<div class="product-num">
+							<div class="buy">
+								购买数量：
+							</div>
+							<span id="leftnum">
+								剩余<span id="amount" v-cloak>{{product.stock}}</span>件
+							</span>
+							<div class="operation">
+								<div id="jian" class="noneactive">
+									-
+								</div>
+								<div id="count">
+									1
+								</div>
+								<div id="jia">
+									+
+								</div>
+							</div>
+						</div>
+				
+					</div>
+					<!--<div id="actions">
+						<div class="action-add">
+							立即购买
+						</div>
+						<div class="action-buy">
+							加入购物车
+						</div>
+					</div>-->
+					<div class="weui-tabbar">
+						<div class="weui-tabbar__item actionadd">
+							<!--<span class="weui-badge" style="position: absolute;top: -.4em;right: 1em;">8</span>
+     -->
+							<p class="weui-tabbar__label" v-on:click.stop="addCart()">加入购物车</p>
+						</div>
+						<div class="weui-tabbar__item actionbuy">
+
+							<p class="weui-tabbar__label" v-on:click.stop="gotoNext()">立即购买</p>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</body>
+
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+			//初始化轮播图
+
+			//common.addtoShopCart();
+			common.jianClick();
+			common.jiaClick();
+			common.closeClick();
+		})
+
+		// 全局变量
+		var self;
+		var dcategory = new Vue({
+			el: '#dcategory',
+			data: {
+
+				titleImg: null,
+				goods: [
+				
+				],
+				product: {
+					
+				},
+				error: null
+			},
+			beforeCreate: function(){
+			},
+			created: function() {
+				self = this;
+				self.getDCategoryData(common.getUrlParam("mainId"));
+				self.getNotice();
+			},
+			methods: {
+                getNotice:function () {
+                    $.get(baseUrl+"/buyer/module/notice/1",
+                        function (res) {
+                            if(res.code==200){
+                                $("#notice").html(res.data[0].notice);
+                                $('.marquee').marquee({
+                                    duration: 5000
+                                });
+                            }
+                        });
+                },
+                //加入购物车
+                addCart: function() {
+                    let count = Number($("#count").text());
+                    let pro = self.product;
+                    $.ajax({
+                        type: "post",
+                        url: baseUrl + '/buyer/cart/create',
+                        data: JSON.stringify({
+                            'productIcon': pro.iconImg,
+                            'productId': pro.id,
+                            'productName': pro.name,
+                            'productPrice': pro.price,
+                            'productQuantity': count
+                        }),
+                        dataType: "json",
+                        contentType: "application/json;charset=UTF-8",
+                        success: function(data) {
+                            if(data.code != 200) {
+                                $.alert(data.msg);
+                                return;
+                            } else {
+                                $.closePopup();
+                                $.toast("添加购物车成功", 500);
+                            }
+                        }
+
+                    })
+                },
+
+                gotoNext: function(){
+                    let count = Number($("#count").text());
+                    let pro = self.product;
+                    location.href='../order/order.html?pid='+pro.id+'&pnum='+count+'&freightId='+self.product.freightId;
+                },
+
+				getDCategoryData: function(mainId) {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/category/detail/' + mainId,
+						data: {
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let dcategory = [];
+							let source = data.data[0];
+							let goods = [];
+							let items = source.goods;
+							//console.log(source)
+							for(let j = 0; j < items.length; j++) {
+								let item = {};
+								item['name'] = items[j].productName;
+								item['iconImg'] = items[j].productIcon;
+								item['price'] = items[j].productPrice;
+								item['href'] = "../product/product.html?id=" + items[j].id;
+								item['id'] =items[j].id;
+								goods.push(item);
+							}
+							self.goods = goods;
+							self.titleImg = source.categoryImg;
+                            document.title=source.categoryName;
+
+
+                        }
+					});
+				},
+				showCart: function(id) {
+						  $.ajax({
+                        type: "get",
+                        url: baseUrl+'/buyer/product/basic/'+id,
+                        data: {
+
+                        },
+                        dataType: "json",
+                        success: function(data) {
+
+                            if(data.code!=200){
+                                $.alert(data.msg);
+                                return;
+                            }
+                            let source=data.data[0];
+                            let product={};
+                    
+                            product['name']=source.productName.length >15?(source.productName.substring(0,15)+'...'):source.productName;
+                            product['iconImg']=source.productIcon;
+                            product['stock']=source.productStock;
+                            product['price']=source.productPrice;
+                            product['id'] = id;
+                            product['freightId']=source.freightId;
+                            self.product=product;
+							$("#add-shopcart").popup();
+                        }
+                    });
+					
+				},
+			}
+		})
+
+
+	</script>
+
+</html>

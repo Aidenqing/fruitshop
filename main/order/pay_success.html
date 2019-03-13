@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+		<!--   通用 -->
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="../../js/common/common.js" charset="UTF-8"></script>
+		<script src="../../js/common/jweixin-1.2.0.js" charset="UTF-8"></script>
+		<script type='text/javascript' src="../../js/api-url.js" charset="UTF-8"></script>
+	</head>
+
+	<body>
+	<div class="weui-form-preview" style="height: 100%;" id="app">
+		<div class="weui-form-preview__hd">
+			<label class="weui-form-preview__label" v-show="order.payStatus==1">已支付</label>
+			<label class="weui-form-preview__label" v-show="order.payStatus==0">未支付</label>
+			<em class="weui-form-preview__value" v-cloak>¥{{order.orderAmount}}</em>
+		</div>
+		<div class="weui-form-preview__bd">
+			<div class="weui-form-preview__item">
+				<label class="weui-form-preview__label">订单编号</label>
+				<span class="weui-form-preview__value" v-cloak>{{order.orderid}}</span>
+			</div>
+			<div class="weui-form-preview__item">
+				<label class="weui-form-preview__label">商家</label>
+				<span class="weui-form-preview__value" v-cloak>{{shop}}</span>
+			</div>
+			<div class="weui-form-preview__item">
+				<label class="weui-form-preview__label">收货地址</label>
+				<span class="weui-form-preview__value" v-cloak>{{order.address}}</span>
+			</div>
+			<div class="weui-form-preview__item">
+				<label class="weui-form-preview__label">客服电话</label>
+				<span class="weui-form-preview__value" v-cloak>{{shopPhone}}</span>
+			</div>
+			<div class="weui-form-preview__item">
+				<label class="weui-form-preview__label">门店地址</label>
+				<span class="weui-form-preview__value" v-cloak>{{shopAddress}}</span>
+			</div>
+		</div>
+		<div class="weui-form-preview__ft">
+			<a class="weui-form-preview__btn weui-form-preview__btn_primary" href="../../index.html">再去逛逛</a>
+			<button class="weui-form-preview__btn weui-form-preview__btn_default" v-on:click="cancel">取消订单</button>
+		</div>
+	</div>
+	</body>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-weui/1.2.1/js/jquery-weui.min.js"></script>-->
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js' charset="UTF-8"></script>
+	<script type="text/javascript" charset="UTF-8">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+
+			//$("#add-shopcart").popup();
+		})
+
+		// 全局变量
+		var self;
+		new Vue({
+			el: '#app',
+			data: {
+				shop:"",
+				shopPhone:"",
+				shopAddress:"",
+				order:{}
+
+			},
+			beforeCreate: function(){
+
+			},
+			created: function() {
+               // self.getOrder();
+                self = this;
+                self.getShop();
+                self.getOrder();
+			},
+			methods: {
+				getOrder: function() {
+                    let orderid = common.getUrlParam("orderid");
+                    $.get(
+						baseUrl+"/buyer/order/basic/"+orderid,
+						function (res) {
+							self.order = res.data[0];
+                        }
+					);
+				},
+				getShop: function() {
+                    $.get(
+                        baseUrl+"/buyer/shop/one/"+2,
+                        function (res) {
+                            self.shop = res.data[0].name;
+                            self.shopAddress = res.data[0].address;
+                            self.shopPhone = res.data[0].phone;
+                        }
+                    );
+
+				},
+				cancel:function () {
+                    $.confirm("您真的要取消该订单吗？", function() {
+                        $.get(baseUrl+"/buyer/order/cancel/"+common.getUrlParam("orderid"),
+                            function (res) {
+                                if (res.code==200){
+                                    $("button").attr("disabled",true);
+                                    $("button").html("订单已关闭");
+                                }
+                            });
+                    }, function() {
+                        $.toast("感谢您的手下留情", "text");
+                    });
+                },
+			}
+		})
+	</script>
+
+</html>

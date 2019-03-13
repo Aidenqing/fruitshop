@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+		<title>会员卡</title>
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js" charset="UTF-8"></script>
+		<script type="text/javascript" src="../../js/common/common.js" charset="UTF-8"></script>
+		<script src="../../js/common/jweixin-1.2.0.js" charset="UTF-8"></script>
+		<script type='text/javascript' src="../../js/api-url.js" charset="UTF-8"></script>
+		<style>
+			#app>div {
+				padding: 1px 5px;
+				background: white;
+				margin-bottom: 5px;
+			}
+			
+			.member-cart {
+				background: #2DC100;
+				box-shadow: 0px 5px 5px #000000;
+				border-radius: 5px;
+				display: flex;
+				padding-left: 10px;
+				padding-top: 5px;
+				height: 130px;
+				margin-top: 10px;
+				color: black;
+			}
+			
+			.member-cart img {
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+			}
+			
+			.member-cart .userInfo {
+				padding-left: 5px;
+				font-size: 14px;
+			}
+			
+			.member-cart .more-detail {
+				padding: 3px 6px;
+				background: white;
+				opacity: 0.5;
+				border-radius: 10px;
+				font-size: 12px;
+				margin-left: 5px;
+				color: #999999;
+			}
+			
+			.myinfo {
+				display: flex;
+				padding-top: 10px;
+			}
+			
+			.myinfo>div {
+				flex-basis: 50%;
+				text-align: center;
+			}
+			
+			.myinfo .value {
+				color: #2DC100;
+			}
+			
+			.myinfo span {
+				font-size: 12px;
+			}
+			
+			.myinfo .name {
+				font-size: 10px;
+				color: #6f6e6e;
+			}
+			
+			.weui-cells {
+				font-size: 14px;
+			}
+			
+			.sign {
+				color: #c4c4c4;
+				font-size: 12px;
+				display: flex;
+				align-items: center;
+			}
+			
+			.sign>div {
+				width: 5px;
+				height: 5px;
+				background: bisque;
+				border-radius: 50%;
+				display: inline-block;
+				line-height: 2px;
+				margin-right: 10px;
+			}
+			
+			.sign .signed {
+				background: #000000;
+			}
+		</style>
+	</head>
+<!--<script>-->
+    <!--common.checkFunction();-->
+<!--</script>-->
+	<body>
+		<div id="app">
+			<div class="card">
+				<div class="member-cart">
+					<img v-bind:src="userData.headImg" v-cloak>
+					<div class="userInfo">
+						<div class="phone" v-cloak>{{userData.nickName}}</div>
+						<div class="shopName"><span v-cloak>{{userData.vipName}}</span><a href="membeillustrate.html" class="more-detail">会员权益</a></div>
+						<div class="sign">
+							<div> </div><span v-on:click.stop="sign(userData.sign)" style="color: gold">{{userData.signText}}</span>
+						</div>
+					</div>
+
+				</div>
+				<div class="myinfo">
+					<div>
+						<div class="value" v-cloak>
+							{{userData.jf}}<span>分</span>
+						</div>
+						<a class="name" href="jf.html">
+							积分 >
+						</a>
+					</div>
+
+					<div>
+						<div class="value" v-cloak>
+							{{userData.coupon}}<span>张</span>
+						</div>
+						<a href="mycoupon.html" class="name">
+							优惠券 >
+						</a>
+					</div>
+
+				</div>
+			</div>
+			<div class="">
+				<div class="weui-cells">
+					<a class="weui-cell weui-cell_access" href="../../index.html">
+						<div class="weui-cell__bd">
+							<p>果园餐厅</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="../branchShop/shops.html">
+						<div class="weui-cell__bd">
+							<p>果园外卖</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="./mycollection.html">
+						<div class="weui-cell__bd">
+							<p>我的收藏</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="./myorder.html">
+						<div class="weui-cell__bd">
+							<p>我的订单</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="../distribution/join-index.html">
+						<div class="weui-cell__bd">
+							<p>分销中心</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="./myinfo.html">
+						<div class="weui-cell__bd">
+							<p>账号设置</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+					<a class="weui-cell weui-cell_access" href="../address/address.html">
+						<div class="weui-cell__bd">
+							<p>地址管理</p>
+						</div>
+						<div class="weui-cell__ft">
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</body>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-weui/1.2.1/js/jquery-weui.min.js"></script>-->
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js' charset="UTF-8"></script>
+	<script type="text/javascript" charset="UTF-8">
+		<!-- 页面加载完成需要执行的函数 -->
+        // 全局变量
+		var self;
+		new Vue({
+			el: '#app',
+			data: {
+				userData: {
+
+				},
+
+				error: null
+			},
+			beforeCreate: function(){
+			},
+			created: function() {
+			
+				self = this;
+				self.getUserData();
+			
+			},
+			methods: {
+				sign: function(flg) {
+					
+					if(flg==1){
+					$.alert('您已签到');
+					return;
+					}
+					$.showLoading();
+					let openid = common.getOpenId();
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/sign/sign',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+					$.hideLoading();
+							if(data.code != 200) {
+							$.alert(data.msg);
+								return;
+							}
+                            $.toptip('签到成功', 'success');
+							self.getUserData();
+
+						}
+					});
+
+				},
+				getUserData: function() {
+					$.showLoading();
+					let openid = common.getOpenId();
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/vipMember/mycard',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							self.userData = data.data[0]
+							self.userData['signText']=data.data[0].sign==0?'每日签到':'已签到';
+							self.userData['sign']=data.data[0].sign;
+							$.hideLoading();
+
+						}
+					});
+				},
+			}
+		})
+	</script>
+
+</html>

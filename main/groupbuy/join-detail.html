@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<style>
+			#app {
+				font-size: 12px;
+			}
+			
+			.process {
+				background: white;
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				color: #828282;
+				border-bottom: 1px solid #CCCCCC;
+				margin-bottom: 5px;
+			}
+			
+			.process img {
+				width: 30px;
+				height: 30px;
+			}
+			
+			.process .item {
+				display: flex;
+				align-items: center;
+				flex-direction: column;
+				margin-bottom: 5px;
+			}
+			
+			.process .des {
+				margin-top: 5px;
+			}
+			
+			.info {
+				background: white;
+				display: flex;
+				justify-content: space-around;
+				padding: 5px;
+				margin-bottom: 10px;
+			}
+			
+			.info>.productimg {
+				width: 180px;
+				height: 180px;
+				position: relative;
+			}
+			
+			.productimg img {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.productimg>span {
+				position: absolute;
+				background: #FF4444;
+				color: white;
+				padding: 2px 5px;
+				left: 0;
+				top: 0;
+				font-size: 10px;
+			}
+			
+			.info .detail {
+				font-size: 14px;
+				display: flex;
+				flex-direction: column;
+				margin-left: 2px;
+			}
+			
+			.info .name {
+				max-height: 60px;
+				overflow: hidden;
+				text-align: center;
+				margin-bottom: 20px;
+			}
+			
+			.info .origin {
+				height: 40px;
+				border: 1px solid #C4C4C4;
+				margin-bottom: 1%;
+				position: relative;
+				text-align: center;
+				line-height: 40px;
+				margin-bottom: 20px;
+			}
+			
+			.info .groupprice {
+				height: 40px;
+				border: 1px solid #F31233;
+				position: relative;
+				text-align: center;
+				font-size: 14px;
+				line-height: 40px;
+			}
+			
+			.detail span {
+				position: absolute;
+				background: white;
+				top: -10px;
+				left: 36%;
+				padding: 0 5px;
+				font-size: 6px;
+				line-height: 20px;
+				height: 20px;
+			}
+			
+			.groupbuy-detail {
+				text-align: center;
+				font-size: 16px;
+				background: white;
+				margin-bottom: 10px;
+			}
+			
+			.groupbuy-detail>.title>span {
+				color: #FF4444;
+				font-weight: bold;
+			}
+			
+			.groupbuy-detail>.countdown {
+				font-size: 14px;
+			}
+			
+			.groupbuy-detail>.countdown>span {
+				background: #C4C4C4;
+				padding: 1px 2px;
+			}
+			
+			.item {
+				display: flex;
+				align-items: center;
+				padding: 5px 0;
+			}
+			
+			.join-record .item>img {
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+			}
+				.join-record .item{
+				border-bottom: 1px solid #CCCCCC;
+			}
+			.item span {
+				background: #f44;
+				padding: 2px 5px;
+				color: white;
+				margin-left: 4px;
+				text-align: center;
+				border-radius: 2px;
+				margin: 5px 0;
+			}
+			
+			.join-record {
+				background: white;
+				padding: 0 10px;
+				margin-bottom: 20px;
+			}
+			
+			.join-record>.title {
+				border-bottom: 1px solid #CCCCCC;
+				margin-bottom: 5px;
+			}
+			
+			.join-btn {
+				text-align: center;
+				background: white;
+				padding: 10px;
+				position: fixed;
+    			width: 100%;
+    			bottom: 0;
+			}
+			
+			.join-btn>a {
+				padding: 6px 30px;
+				color: white;
+				background: #F44;
+				font-size: 14px;
+				border-radius: 5px;
+			}
+			.groupbuy-detail span{
+				font-size: 10px;
+				color: #6F6E6E;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app" v-show="self.ok==1">
+			<div class="process">
+				<div class="item">
+					<img src="../../img/shangping.png" />
+					<div class="des">
+						1.选择商品开团 >
+					</div>
+				</div>
+				<div class="item">
+					<img src="../../img/invite.png" />
+					<div class="des">
+						2.邀请好友参团 >
+					</div>
+				</div>
+				<div class="item">
+					<img src="../../img/gouxuan.png" />
+					<div class="des">
+						3.人满成团
+					</div>
+				</div>
+			</div>
+			<div class="info">
+				<div class="productimg">
+					<img v-bind:src="groupProduct.productIcon" />
+					<span>老带新</span>
+				</div>
+				<div class="detail">
+					<div class="name" v-cloak>
+						{{groupProduct.groupName}}
+					</div>
+					<div class="origin" v-cloak>
+						￥{{groupProduct.productPrice}}起/件
+						<span>原件</span>
+					</div>
+					<div class="groupprice" v-cloak>
+						￥{{groupProduct.groupPrice}}起/件
+						<span v-cloak>{{groupProduct.peopleNum}}人团</span>
+					</div>
+				</div>
+			</div>
+			<div class="groupbuy-detail">
+				<div class="title" style="padding: 4px 0;">
+					已成团，离开团成功还差<span>{{diffPeople}}</span>人
+				</div>
+				<div class="countdown" v-show="self.show">
+					剩余<span v-cloak>{{self.countdown}}</span>自动结束
+				</div>
+				<div class="countdown" v-show="!self.show">
+					{{self.endText}}
+				</div>
+				<div >
+					<span>好货手慢无，快来买吧！</span><a href="guide.html" style="font-size: 10px;">玩法详情</a>
+				</div>
+			</div>
+			<div class="join-record">
+				<div class="title">
+					参团记录
+				</div>
+				<div class="item" v-for="item in groupRecord">
+					<img v-bind:src="item.head" />
+					<div class="persion" style="margin-left: 2px;">
+						<div class="name">
+							{{item.nickName}} <span v-if='item.peopleType==0'>团长大人</span>
+							<span v-else>团员</span>
+						</div>
+						<div class="time" v-cloak>
+							{{item.startTime}} 开团
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="join-btn">
+				<a href="javascript:;" v-on:click.stop="showCart()"> 一键参团</a>
+			</div>
+
+			<div id="add-shopcart" class="weui-popup__container popup-bottom">
+				<div class="weui-popup__overlay"></div>
+				<div class="weui-popup__modal">
+					<div class="product">
+						<img v-bind:src="groupProduct.productIcon" />
+						<div class="name">
+							{{groupProduct.groupName}}
+						</div>
+						<img src="../../img/close.png" class="close" style="width: 2rem;height: 2rem;">
+						<div class="price">
+							<span class="groupperson">{{groupProduct.peopleNum}}人拼团价</span>
+							<span class="groupprice">￥{{groupProduct.groupPrice}}</span>
+							<span class="originprice">￥{{groupProduct.productPrice}}</span>
+						</div>
+					</div>
+					<div class="details">
+
+						<div class="product-num">
+							<div class="buy">
+								购买数量：
+							</div>
+							<div class="operation">
+								<div id="jian">
+									-
+								</div>
+								<div id="count">
+									1
+								</div>
+								<div id="jia">
+									+
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="weui-tabbar">
+						<div class="weui-tabbar__item actionbuy">
+							<p class="weui-tabbar__label" v-on:click = "openGroup">下一步</p>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</body>
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+            common.jianClick();
+            common.jiaClick();
+            common.closeClick();
+			//$("#add-shopcart").popup();
+		});
+
+		// 全局变量
+		var self;
+		var openid;
+		new Vue({
+			el: '#app',
+			data: {
+				ok: '',
+				groupProduct: '',
+				groupRecord: [],
+				count: null,
+				countdown: '',
+                diffPeople:0,
+				timer: null,
+				show: false,
+				endText: '',
+				error: null
+			},
+			beforeCreate: function() {
+                openid = common.getOpenId();
+            },
+			created: function() {
+				self = this;
+				self.getData();
+            },
+			methods: {
+                showCart:function () {
+                    $("#add-shopcart").popup();
+                },
+				getData: function() {
+					$.showLoading();
+					$.get(baseUrl + "/buyer/groupbuy/record_detail/" + common.getUrlParam('joinId'),
+						function(res) {
+							self.groupProduct = res.data[0].groupProduct;
+							self.groupRecord = res.data[0].groupRecords;
+
+							for (var i=0;i<self.groupRecord.length;i++){
+							    if (self.groupRecord[i].peopleType==0){
+							        self.count = self.groupRecord[i].diffTime;
+							        self.diffPeople = self.groupRecord[i].diffPeople;
+                                }
+							}
+							self.ok = 1;
+							self.getCountdown();
+							$.hideLoading();
+							self.share();
+
+						});
+				},
+				getCountdown: function() {
+					const MINI_TIME_COUNT = 5;
+					if(!self.timer) {
+
+						self.timer = setInterval(() => {
+
+							let difftime = parseInt(self.count);
+							if(difftime > MINI_TIME_COUNT) {
+
+								self.countdown = common.countDown(difftime);
+								self.count = difftime - 1;
+								self.show = true;
+							} else {
+								self.show = false;
+								clearInterval(self.timer)
+								self.endText = "拼团结束";
+							}
+
+						}, 1000)
+					}
+
+				},
+                openGroup:function () {
+                    let count = Number($("#count").text());
+                    location.href='order.html?pid='+self.groupProduct.productId+'&pnum='+count+'&groupId='+self.groupProduct.id+'&groupPrice='+self.groupProduct.groupPrice+"&leaderId="+common.getUrlParam('joinId')+"&freightId="+self.groupProduct.freightId;
+                },
+
+                share:function () {
+                    $.get(baseUrl+"/wechat/sdk/getSignature?url="+window.location.href,
+                        function (res) {
+                            if(res.code==200){
+                                //权限验证信息
+                                wx.config({
+                                    debug: false,
+                                    appId: res.data[0].appId,
+                                    timestamp: res.data[0].timestamp,
+                                    nonceStr: res.data[0].nonceStr,
+                                    signature: res.data[0].signature,
+                                    jsApiList: [
+                                        // 所有要调用的 API 都要加到这个列表中
+                                        'onMenuShareAppMessage' //  分享到朋友接口
+                                    ]
+                                });
+                                wx.ready(function () {
+                                    // 微信分享的数据
+                                    var shareData = {
+                                        "imgUrl": self.groupProduct.productIcon,    // 分享显示的缩略图地址  ----要添加！！！
+                                        "link": window.location.href,    // 分享地址
+                                        "desc": "我在维喜多发起拼团，希望你能加入我，和我一起分享胜利的美食！",   // 分享描述
+                                        "title": self.groupProduct.groupName,   // 分享标题
+                                        success: function () {
+                                            //分享成功后做相应的数据处理
+                                            if (openid!=""){
+                                                $.get(
+                                                    baseUrl + '/wechat/sdk/shareSuccess/'+openid,
+                                                    function (content) {
+
+                                                    }
+                                                )
+                                            }else {
+                                                alert("亲爱的果友，您还未授权或者未关注我们，所以不能领取分享奖励哦！")
+                                            }
+
+                                        }
+                                    };
+                                    wx.onMenuShareAppMessage(shareData);
+                                });
+                                wx.error(function (res) {
+                                })
+                            }
+                        });
+                },
+
+			}
+		})
+	</script>
+
+</html>

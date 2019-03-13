@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+    <title>订单详情</title>
+    <link rel="stylesheet" href="../../css/base.css" />
+    <link rel="stylesheet" href="../../css/weiui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+    <link rel="stylesheet" type="text/css" href="../../css/detail.css">
+
+    <script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="../../js/common/vue.min.js"></script>
+    <script type="text/javascript" src="../../js/common/common.js"></script>
+    <script src="../../js/common/jweixin-1.2.0.js"></script>
+    <script type='text/javascript' src="../../js/api-url.js"></script>
+</head>
+<body>
+<div id="app" class="order-detail order-detail--fixed-bottom">
+    <div type="order-status">
+        <div class="order-status order-status--closed" v-show="inCartData.orderStatus==3">
+            <div class="order-status__desc" >
+                <div><h3>交易关闭</h3><p>超时未付款，订单自动关闭</p></div>
+            </div>
+        </div>
+        <div class="order-status order-status--cancel" v-show="inCartData.orderStatus==2">
+            <div class="order-status__desc" >
+                <div><h3>订单已取消</h3><p>有任何不满意的地方，请告诉我们哦</p></div>
+            </div>
+        </div>
+        <div class="order-status order-status--success" v-show="inCartData.orderStatus==1">
+            <div class="order-status__desc" >
+                <div><h3>订单已完成</h3><p>期待您的下次选购</p></div>
+            </div>
+        </div>
+        <div class="order-status order-status--topay" v-show="inCartData.orderStatus==0 && inCartData.payStatus==0">
+            <div class="order-status__desc" >
+                <div><h3>待支付</h3><p>未支付订单，将会自动关闭哦</p></div>
+            </div>
+        </div>
+        <div class="order-status order-status--paid"  v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==0 && inCartData.type!=2">
+            <div class="order-status__desc" >
+                <div><h3>待出库</h3><p>我们会第一时间给您安排发货，请耐心等待哦</p></div>
+            </div>
+        </div>
+        <div class="order-status order-status--send"  v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==1">
+            <div class="order-status__desc" >
+                <div><h3>待收货</h3><p>带着祝福的美食已搭上飞船，期待与您相见</p></div>
+            </div>
+        </div>
+
+        <div class="order-status order-status--paid"  v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.groupStatus==0 && inCartData.type==2">
+            <div class="order-status__desc" >
+                <div><h3>正在拼团</h3><p>赶快把您参与拼团的商品分享给好友，祝您一拼成功！</p></div>
+            </div>
+        </div>
+
+        <div class="order-status order-status--paid"  v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.groupStatus==2 && inCartData.sendStatus==0 && inCartData.type==2">
+            <div class="order-status__desc" >
+                <div><h3>待出库</h3><p>您已拼团成功，请耐心等待发货哦</p></div>
+            </div>
+        </div>
+
+        <div class="order-status order-status--paid"  v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.groupStatus==1 && inCartData.type==2">
+            <div class="order-status__desc" >
+                <div><h3>拼团失败</h3><p>呜呜呜~，虽然拼团失败，但是我们还会有机会哦！</p></div>
+            </div>
+        </div>
+
+    </div>
+    <div type="virtual-goods"></div>
+    <div class="order-address" type="order-address">
+        <div class="shipping-address">
+            <div class="van-hairline--top">
+                <div class="cap-logistics" show-address-detail="true">
+                    <div class="cap-logistics__address"><i class="van-icon van-icon-location"></i>
+                        <div class="cap-logistics__address-content">
+                            <div><p class="cap-logistics__address-name" v-cloak>收货人：{{inCartData.name}}</p>
+                                <p class="cap-logistics__address-tel" v-cloak>{{inCartData.phone}}</p></div>
+                            <p class="cap-logistics__address-detail" v-cloak>收货地址：{{inCartData.address}}</p></div>
+                    </div>
+                    <i class="van-icon van-icon-arrow" style="display: none;"></i></div>
+            </div></div></div>
+    <div type="goods-info">
+        <div class="cap-order-goods van-cell-group van-hairline--top-bottom goods-info">
+            <div class="cap-order-goods-header van-cell">
+                <div class="van-cell__value van-cell__value--alone"><i class="van-icon van-icon-shop"></i><a
+                        href="javscript:;">店铺：维喜多果园餐厅</a></div></div>
+            <div class="cap-order-goods-list">
+                <div class="cap-order-goods-card" v-for="item in inCartData.orderDetailVOS">
+                    <div class="van-card">
+                        <div class="van-card__thumb">
+                            <a href="javascript:;">
+                            <img v-bind:src="item.productIcon"> </a></div>
+                        <div class="van-card__content">
+                            <div class="van-card__row">
+                                <div class="van-card__title" v-cloak>{{item.productName}}</div>
+                                <div class="van-card__price" v-cloak>¥{{item.productPrice|money}}</div>
+                            </div>
+                            <div class="van-card__row"><p class="van-card__desc"></p><span
+                                    class="van-card__num" v-cloak>x {{item.productQuantity}}</span></div>
+                            <div class="van-card__row">
+                                <div class="cap-order-goods-card__tags"></div>
+                                <div class="cap-order-goods-card__action-container"></div>
+                            </div>
+                        </div></div>
+                    <div class="cap-order-goods-card__extra"></div></div>
+            </div>
+            <!--<div class="cap-express-way van-cell van-hairline">-->
+                <!--<div class="van-cell__value van-cell__value&#45;&#45;alone">-->
+                    <!--<div class="van-cell van-hairline">-->
+                        <!--<div class="van-cell__title"><p>配送方式</p></div>-->
+                        <!--<div class="van-cell__value"><p class="cap-express-way__fee">¥{{inCartData.freightVO.freight|money}}</p>-->
+                            <!--<p class="cap-express-way__type">{{inCartData.freightVO.name}}</p></div></div>-->
+                <!--</div></div>-->
+            <div class="cap-order-goods-message van-cell van-hairline">
+                <div class="van-cell__title"><span>买家留言：</span></div>
+                <div class="van-cell__value"><p v-cloak>{{inCartData.buyerMessage}}</p></div></div>
+            <div class="cap-order-goods-price van-cell van-hairline">
+                <div class="van-cell__title"><span>合计</span></div>
+                <div class="van-cell__value"><span v-cloak>¥{{inCartData.orderAmount|money}}</span></div></div>
+        </div></div>
+    <div type="pay-panel">
+        <div class="goods-pay van-cell-group van-hairline--top-bottom">
+            <div class="van-cell van-hairline">
+                <div class="van-cell__value van-cell__value--alone">
+                    <div class="goods-pay__cell">
+                        <p class="goods-pay__cell-title">商品金额</p>
+                        <p class="goods-pay__cell-value" v-cloak>¥{{productMoney|money}}</p>
+                    </div>
+                    <div class="goods-pay__cell">
+                        <p class="goods-pay__cell-title">运费</p>
+                        <p class="goods-pay__cell-value" v-cloak>+ ¥{{inCartData.freightVO.freight|money}}</p>
+                    </div>
+                    <div class="goods-pay__cell">
+                        <p class="goods-pay__cell-title">优惠券</p>
+                        <p class="goods-pay__cell-value" v-cloak>- ¥{{inCartData.discountSetVO.cashCoupon|money}}</p>
+                    </div>
+                </div>
+             </div>
+            <div class="goods-pay__real-pay van-cell van-hairline">
+                <div class="van-cell__title"><span>应付金额</span></div>
+                <div class="van-cell__value"><span v-cloak>¥{{inCartData.orderAmount|money}}</span></div>
+            </div>
+        </div></div>
+    <div class="order-base-info" type="order-base-info">
+        <div class="van-cell van-hairline">
+            <div class="van-cell__title">
+                <p>订单编号：<span v-cloak>{{inCartData.orderid}}</span></p>
+                <p>创建时间：<span v-cloak>{{inCartData.createTime}}</span></p>
+                <p>配送方式：<span v-cloak>{{inCartData.courierFirm}} {{inCartData.trackingNumber}}</span></p>
+            </div>
+        </div>
+    </div>
+    <div type="order-footer">
+        <div class="cap-follow-mp" style="display: none;"><span class="cap-follow-mp__close">×</span>
+            <div class="cap-follow-mp__wrapper">
+                <div class="cap-follow-mp__no-mp"></div>
+                <div class="cap-follow-mp__help-title">商家二维码失效</div>
+                <div class="cap-follow-mp__help-title">公众号暂时无法关注~</div>
+            </div>
+        </div>
+    </div>
+    <div class="cap-bottom-action van-hairline" type="bottom-action">
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==0" v-on:click="cancel(inCartData.orderid)">
+            <span class="van-button__text">取消订单</span>
+        </button>
+
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==1" v-on:click="confirm(inCartData.orderid)">
+            <span class="van-button__text">确认收货</span>
+        </button>
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==1" v-on:click="express(inCartData.courierFirm,inCartData.trackingNumber)">
+            <span class="van-button__text">查看物流</span>
+        </button>
+
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==0 && inCartData.type!=2 " v-on:click="cancel(inCartData.orderid)">
+            <span class="van-button__text">取消订单</span>
+        </button>
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.sendStatus==0 && inCartData.type==2 && inCartData.groupStatus==2 " v-on:click="cancel(inCartData.orderid)">
+            <span class="van-button__text">取消订单</span>
+        </button>
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==1 && inCartData.groupStatus==0 && inCartData.type==2" v-on:click="gotoPin(inCartData.leaderId)">
+            <span class="van-button__text">爱拼才会赢</span>
+        </button>
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus != 0" v-on:click="gotoIndex()">
+            <span class="van-button__text">再去逛逛</span>
+        </button>
+
+        <button class="van-button van-button--default van-button--small" v-show="inCartData.orderStatus==0 && inCartData.payStatus==0" v-on:click="buynow(inCartData.orderid)">
+            <span class="van-button__text">立即支付</span>
+        </button>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+<script type="text/javascript" src='../../js/common/filter.js'></script>
+
+<script type="text/javascript">
+    $(function(){
+
+    })
+    var self;
+    let openid;
+    let orderId;
+    new Vue({
+        el: '#app',
+        data: {
+            inCartData: [],
+            error: null
+        },
+        beforeCreate: function () {
+            openid = common.getOpenId();
+            let tmporderId = common.getUrlParam("orderId");
+            orderId = tmporderId ? tmporderId : '';
+        },
+        created: function () {
+            self = this;
+            self.initOrderDetail();
+
+        },
+        computed: {
+            productMoney: function () {
+                let orderItems =self.inCartData.orderDetailVOS;
+                let sum= 0;
+                for (let i in orderItems ) {
+                    sum+=orderItems[i].productQuantity*orderItems[i].productPrice;
+                }
+                return sum;
+            }
+        },
+        methods: {
+            buynow:function (orderid) {
+                location.href=baseUrl + "/buyer/pay/create?orderId="+orderid+"&returnUrl="+baseUrl+"/fruitshop/main/order/pay_success.html?orderid="+orderid;
+            },
+            cancel:function (orderid) {
+                $.confirm("您真的要取消该订单吗？", function() {
+                    $.showLoading();
+                    $.get(baseUrl+"/buyer/order/cancel/"+orderid,
+                    function (res) {
+                        if (res.code==200){
+                         $.hideLoading();
+                        location.reload()
+                         }
+                     });
+                }, function() {
+                    $.toast("感谢您的手下留情", "text");
+                 });
+
+            },
+            express:function (courierFirm,trackingNumber) {
+                location.href = "https://m.kuaidi100.com/index_all.html?type="+courierFirm+"&postid="+trackingNumber;
+            },
+            confirm:function(orderid) {
+
+                $.confirm("请确认您收到的美食没有问题哦", function() {
+                    $.showLoading();
+                    $.get(baseUrl+"/buyer/order/myorder/confirm/"+orderid,
+                             function (res) {
+                                if (res.code==200){
+                                    $.hideLoading();
+                                    location.reload()
+                                }
+                             }
+                    );
+                }, function() {
+                        $.toast("美食如有问题请尽快联系我们的客服。", "text");
+                });
+            },
+            gotoIndex:function  (orderid) {
+                location.href ="../../index.html";
+            },
+            gotoPin:function  (leaderId) {
+                location.href ="../groupbuy/join-detail.html?joinId="+leaderId;
+            },
+            initOrderDetail: function () {
+                $.ajax({
+                    type: "get",
+                    url: baseUrl + '/buyer/order/myorder/detail/' +common.getUrlParam("orderid"),
+                    data: {},
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code != 200) {
+                            $.alert(data.msg);
+                            return;
+                        }
+                        self.inCartData = data.data[0];
+                        console.log(JSON.stringify(self.inCartData.discountSetVO)=='{}');
+                        //地址分割处理
+                        let address = self.inCartData.address;
+                        self.inCartData.name = address.split(",")[0];
+                        self.inCartData.phone = address.split(",")[1];
+                        self.inCartData.address = address.split(",")[2];
+                        //买家留言
+                        let buyerMessage = self.inCartData.buyerMessage;
+                        self.inCartData.buyerMessage = buyerMessage ? buyerMessage : '无';
+
+                        let courierFirm = self.inCartData.courierFirm;
+                        self.inCartData.courierFirm = courierFirm ? courierFirm : '无';
+
+                        let trackingNumber = self.inCartData.trackingNumber;
+                        self.inCartData.trackingNumber = trackingNumber ? trackingNumber : '';
+
+                        if(JSON.stringify(self.inCartData.discountSetVO)=='{}'){
+                            self.inCartData.discountSetVO.cashCoupon = 0;
+                        }
+                        if (!self.inCartData.groupRecordDTOList){
+                            self.inCartData.groupRecordDTOList = [];
+                        }
+
+
+
+                    }
+                })
+            },
+        }
+    });
+</script>
+
+</html>

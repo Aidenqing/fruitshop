@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+    <meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)"/>
+    <link rel="stylesheet" href="../../css/weiui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../css/swiper.min.css"/>
+    <link rel="stylesheet" href="../../css/order-list.css"/>
+    <link rel="stylesheet" href="../../css/public.css"/>
+    <title>领券中心</title>
+    <script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="../../js/common/vue.min.js"></script>
+    <script type="text/javascript" src="../../js/common/common.js"></script>
+    <script src="../../js/common/jweixin-1.2.0.js"></script>
+    <script type='text/javascript' src="../../js/api-url.js"></script>
+    <style>
+        .header{
+            text-align: center;
+        }
+        .left-col {
+            background-image: url("../../img/youhuiquan.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            flex-basis: 70%;
+        }
+
+        .item {
+            display: flex;
+            margin: 10px 5px;
+            height: 100px;
+        }
+
+        .right-col {
+            flex-basis: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-col > h3 {
+            text-align: center;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-order-type {
+            padding: 10px;
+            line-height: 14px;
+            border-radius: 2px;
+            color: #fff;
+            background-color: #ff5050;
+            border-color: #ff5050;
+            font-size: 10px;
+        }
+        .receive{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .receive span{
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" v-cloak>
+    <div class="choose-item">
+        <img src="../../img/coupon.jpg" style="width: 100%;height: 100%">
+    </div>
+
+    <div class="header">
+        <a href="javascript:;"><span class="font-size-14">----&nbsp;&nbsp;免积分优惠券&nbsp;&nbsp;----</span></a>
+    </div>
+
+    <div class="coupon-items" v-bind:class="{hide: couponData.length==0}">
+        <div class="item" v-for="item in couponData">
+            <div class="left-col">
+
+                <h3>￥ {{item.cashCoupon}}</h3>
+                <h3>{{item.discountName}}</h3>
+            </div>
+            <div class="right-col">
+                <div class="receive">
+                    <button class="btn-order-type" v-on:click="receiveOne(item.id)">
+                        立即领取
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="coupon-items" v-bind:class="{hide: couponData.length > 0}">
+            <div class="empty-list">
+                <h2>还没有任何优惠券T.T</h2>
+                <div class="des">好东西，需要静静等待</div>
+            </div>
+            <div class="go-homepage-btn">
+                <a href="../../index.html">去逛逛</a>
+            </div>
+        </div>
+
+
+        <div class="header">
+            <a href="javascript:;"><span class="font-size-14">----&nbsp;&nbsp;积分兑换优惠券&nbsp;&nbsp;----</span></a>
+        </div>
+
+        <div class="coupon-items" v-bind:class="{hide: chooseData.length==0}">
+            <div class="item" v-for="item in chooseData">
+
+                <div class="left-col">
+                        <h3 v-cloak>￥ {{item.cashCoupon}}</h3>
+                        <h3 v-cloak>{{item.discountName}}</h3>
+                </div>
+                <div class="right-col">
+                    <div class="receive">
+                        <span class="c-orange" v-cloak>积分：{{item.integral}}</span>
+                        <button class="btn-order-type"
+                                v-on:click="costByIntegral(item.id,item.integral)"
+                        >立即兑换
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="coupon-items" v-bind:class="{hide: chooseData.length > 0}">
+                <div class="empty-list">
+                    <h2>还没有任何优惠券T.T</h2>
+                    <div class="des">好东西，需要静静等待</div>
+                </div>
+                <div class="go-homepage-btn">
+                    <a href="../../index.html">去逛逛</a>
+                </div>
+            </div>
+
+        </div>
+</body>
+<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+<script type="text/javascript" src='../../js/common/filter.js'></script>
+
+<script type="text/javascript">
+    <!-- 页面加载完成需要执行的函数 -->
+    $(function () {
+    })
+
+    // 全局变量
+    var self;
+    let openid;
+    new Vue({
+        el: '#app',
+        data: {
+            couponData: [],
+            chooseData: [],
+            error: null
+        },
+        beforeCreate: function () {
+            openid = common.getOpenId();
+        },
+        created: function () {
+            self = this;
+            self.getCouponData();
+            self.getCouponData2();
+        },
+        methods: {
+            //免积分领券
+            getCouponData: function () {
+                $.showLoading();
+                $.ajax({
+                    type: "get",
+                    url: baseUrl + '/buyer/discount/market/discount/',
+                    data: {},
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code != 200) {
+                            $.alert(data.msg);
+                            return;
+                        }
+                        $.hideLoading();
+                        self.couponData = data.data;
+                    }
+                })
+            },
+            //积分领券
+
+            getCouponData2: function () {
+                $.showLoading();
+                $.ajax({
+                    type: "get",
+                    url: baseUrl + '/buyer/discount/integral/discount/',
+                    data: {},
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.code != 200) {
+                            $.alert(data.msg);
+                            return;
+                        }
+                        $.hideLoading();
+                        self.chooseData = data.data;
+                    }
+                })
+            },
+            costByIntegral: function (discountId, integral) {
+                $.get(baseUrl + '/buyer/discount/costByIntegral/' + discountId+ "/" + integral,
+                    function (res) {
+                        if (res.data.length > 0) {
+                            $.toast("兑换成功！", 1000);
+                        } else {
+                            $.toast("积分不够哦", "cancel");
+                        }
+
+
+                    });
+            },
+            receiveOne: function (discountId) {
+                $.get(baseUrl + '/buyer/discount/receiveOne/' + discountId,
+                    function (res) {
+                        if (res.data.length > 0) {
+                            $.toast("领取成功，用完再来哦", 1000);
+                        } else {
+                            $.toast("用完再来领取哦", "cancel");
+                        }
+
+
+                    });
+            },
+        }
+    })
+
+</script>
+
+</html>

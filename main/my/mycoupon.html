@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/order-list.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+		<title>我的优惠券</title>
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<style>
+			.item {
+				display: flex;
+				background: white;
+				margin: 2px 10px;
+				padding-right: 5px;
+				height: 90px;
+				overflow: hidden;
+				margin-bottom: 5px;
+			}
+			
+			.item .tu {
+			
+				width: 30px;
+				flex-basis: 10%;
+			}
+			
+			.tu>img {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.item .info {
+				flex-basis: 90%;
+				padding-left: 10px;
+			}
+			
+			.status {
+				display: flex;
+				justify-content: space-between;
+				font-size: 10px;
+				border-bottom: 1px solid #e1e1e1;
+				padding: 2px 0;
+			}
+			
+			.status>.use {
+				color: #3388FF;
+				border: #3388FF;
+				border: 1px solid #3388FF;
+				border-radius: 20px;
+				padding: 0 15px;
+				font-size: 8px;
+			}
+			
+			.value {
+				display: flex;
+			}
+			
+			.count {
+				font-size: 34px;
+				font-weight: bolder;
+			}
+			
+			.count span {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			
+			.desc {
+				padding-left: 10px;
+				color: #8a8888;
+			}
+			
+			.desc>.name {
+				font-size: 14px;
+			}
+			
+			.desc>.man {
+				font-size: 12px;
+			}
+			
+			.desc>.time {
+				font-size: 10px;
+			}
+			
+			.status>.hide {
+				display: none;
+			}
+			.choose-item{
+				display: flex;
+				margin-bottom: 10px;
+     			z-index: 100;
+    			position: fixed;
+     			background: white;
+     			width: 100%;
+			}
+			.choose-item>div{
+				flex-basis: 33.333%;
+				padding: 5px 10px;
+				text-align: center;
+			}
+			.coupon-items{
+     			 padding-top: 40px;
+			}
+			.choose-item>.active{
+				    color: red;
+    				border-bottom: 2px solid;
+  
+			}	
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="choose-item">
+				<div class="active" @click="itmeClick(2)">
+					已过期
+				</div>
+				<div  @click="itmeClick(0)">
+					未使用
+				</div>
+				<div  @click="itmeClick(1)">
+					已使用
+				</div>
+			</div>
+			<div class="coupon-items">
+				<div class="item" v-for="item in chooseData">
+					<div class="tu">
+						<img src="../../img/banquan.png" />
+					</div>
+					<div class="info">
+						<div class="status">
+							<span v-cloak>{{item.useText}}</span>
+							<a href="../../index.html" class="use" v-bind:class="{hide: item.useType!=0}">使用</a>
+						</div>
+						<div class="value">
+							<div class="count" v-cloak>
+								<span>￥</span>{{item.cashCoupon}}
+							</div>
+							<div class="desc" v-cloak>
+								<div class="name">
+									{{item.discountName}}
+								</div>
+								<div class="man" v-cloak>
+									满{{item.fullCut}}可用
+								</div>
+								<div class="time" v-cloak>
+									{{item.startTime}}至{{item.endTime}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div v-bind:class="{hide: couponData.length > 0}" >
+				<div class="empty-list">
+					<h2>您还没有领取任何优惠券T.T</h2>
+					<div class="des">先领券再下单哦</div>
+				</div>
+				<div class="go-homepage-btn">
+					<a href="../coupon/coupon.html">去领券</a>
+				</div>
+			</div>
+
+		</div>
+	</body>
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+            $(".choose-item>div").on('click', function(e) {
+                $(".choose-item>div").removeClass("active");
+                $(this).addClass("active");
+            });
+			//$("#add-shopcart").popup();
+		})
+
+		// 全局变量
+		var self;
+		new Vue({
+			el: '#app',
+			data: {
+				chooseData:[],
+				couponData: [],
+
+				error: null
+			},
+			beforeCreate: function(){
+			},
+			created: function() {
+				self = this;
+				self.getCouponData();
+			},
+			methods: {
+		itmeClick: function(val) {
+            self.handleData(val);
+			},
+			handleData: function(val){
+									
+						let chooseData = [];
+							let source = self.couponData;
+							for(var i = 0; i < source.length; i++) {
+								let item = source[i];
+								if(source[i].useType == val) {
+								chooseData.push(source[i])
+								} 
+							
+							}
+							self.chooseData=chooseData;
+			},
+				getCouponData: function() {
+						$.showLoading();
+					let openid = common.getOpenId();
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/discount/list',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+						$.hideLoading();
+							self.couponData = data.data;
+							self.handleData(2);
+						}
+					});
+				},
+			}
+		})
+	
+	</script>
+
+</html>

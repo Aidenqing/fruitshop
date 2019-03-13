@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>购物车</title>
+
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/detail.css">
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<!-- 插件相关 -->
+		<script type="text/javascript" src="../../js/common/swiper.jquery.min.js"></script>
+		<style>
+			body {
+				background: white;
+			}
+			.inCart-items .item {
+				display: flex;
+				font-size: 14px;
+				align-items: center;
+				position: relative;
+			}
+			.item {
+				background: #fcfcfd;
+				margin-bottom: 2px;
+				padding-top: 0px;
+			}
+			
+			.item .gouxuan {
+				flex-basis: 17%;
+			}
+			
+			.item .iconImg {
+				flex-basis: 34%;
+			}
+			
+			.item .iconImg img {
+				width: 7rem;
+				height: 7rem;
+			}
+			
+			.item .info {
+				flex-basis: 49%;
+				position: relative;
+			}
+			
+			.info .name {
+				height: 52px;
+				overflow: hidden;
+				position: relative;
+			}
+			
+			.info .price {
+				color: red;
+				font-size: 14px;
+				display: flex;
+				justify-content: space-between;
+				margin-right: 1rem;
+			}
+			
+			.info .tips {
+				color: #9B9B9B;
+				height: 26px;
+				overflow: hidden;
+				margin-bottom: 5px;
+				font-size: 14px;
+			}
+			
+			.item .weui-cells {
+				background-color: #f8f8f8;
+				margin: 0;
+			}
+			
+			.item .weui-cell {
+				padding: 0;
+			}
+			
+			.item .weui-cells:after,
+			.item .weui-cells:before {
+				border: none;
+				background-color: #f8f8f8;
+			}
+			
+			.weui-check__label:active {
+				background-color: #f8f8f8;
+			}
+			
+			.delete {
+				position: absolute;
+				right: 0;
+				top: 0;
+				height: 100%;
+				background: #f44;
+				text-align: center;
+				width: 60px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 14px;
+			}
+			.operation {
+				right: 0rem;
+				background-color: #fcfcfd;
+				height: 100%;
+				width: 100%;
+				top: 22px;
+			}
+			#jia,#jian,#count {
+				font-weight: normal;
+			}
+			.edit {
+				text-align: right;
+				padding: 0.5rem 1rem;
+				display: flex;
+				align-items: center;
+				background: white;
+				justify-content: space-between;
+				border-bottom: 1px solid #e5e5e5;
+				font-size: 14px;
+			}
+			.edit img {
+				width: 20px;
+				height: 20px;
+				vertical-align: middle;
+				padding-right: 10px;
+			}
+			.none {
+				display: none;
+			}
+			.amount {
+     			color: #666;
+				font-size: 14px;
+     			float: right;
+     			line-height: 20px;
+			}
+			.gouxuan img {
+				padding-left: 20%;
+				width: 20px;
+    			height: 20px;
+			}
+			.allCheckedImg {
+				width: 40%;
+				height: 40%;
+			}
+			.bottom>div {
+				position: fixed;
+				bottom: 0;
+				text-align: center;
+				height: 46px;
+				line-height: 46px;
+			}
+			.bottom .info {
+				right: 32%;
+				font-size: 12px;
+     			padding-right: 12px;
+			}
+			.bottom .info>div{
+				height: 23px;
+				line-height: 23px;
+			}
+			.bottom .check {
+				padding-left: 1rem;
+			}
+			.bottom .jiesuan {
+				right: 0;
+				width: 30%;
+				background: #f44;
+     			color: #fff;
+			}
+			.disabled{
+     			color: #999!important;
+     			background-color: #f8f8f8!important;
+     			border-top: 1px solid #e5e5e5;
+     			border-right: 1px solid #e5e5e5;
+			}
+			.bottom {
+				position: fixed;
+				bottom: 0;
+				height: 46px;
+				border-top: 1px solid #e5e5e5;
+				width: 100%;
+				font-size: 14px;
+				background-color: #f8f8f8;
+			}
+			.costfont{
+				color: #f44;
+			}
+			.bottom img {
+			    width: 20px;
+    			height: 20px;
+				vertical-align: middle;
+				margin-right: 5px;
+			}
+			#jia, #jian, #count {
+    			padding: .2rem .7rem;
+    		}
+    		.empty-list{
+				  padding-top: 60px;
+				  text-align: center;
+			}
+    		.empty-list h2{
+				  font-size: 16px;
+				  color: #666;
+				  margin-bottom: 10px;
+    		}
+    		.des{
+				  font-size: 14px;
+				  color: #999;
+    		}
+    		.go-homepage-btn{
+				 box-sizing: border-box;
+				width: 110px;
+				height: 36px;
+				line-height: 18px;
+				padding: 8px 30px;
+				font-size: 14px;
+				margin: 0 auto;
+				border: 1px solid #f60;
+				margin-top: 30px;
+				color: #f60;
+				border-radius: 3px;
+    		}
+    		.go-homepage-btn a{
+    		    display: block;
+				color: #f60;
+    		}
+		</style>
+	</head>
+
+	<body>
+
+		<div id="gouwuche">
+			<div v-bind:class="{hide: inCartData.length==0}" >
+			<div class="edit">
+				<div class="cap-order-goods-header van-cell">
+					<div class="van-cell__value van-cell__value--alone">
+						<i class="van-icon van-icon-shop"></i><a href="javscript:;" style="font-size: 14px;color: #333;">店铺：维喜多果园餐厅</a>
+					</div>
+					<span> <img src="../../img/edit.png" v-on:click="editShow()" /></span>
+				</div>
+			</div>
+			<div class="inCart-items" style="min-height: 500px;" >
+				<div class="item" v-for="(item,index) in inCartData">
+					<div class="gouxuan" v-bind:data-index="index">
+						<img v-bind:src="item.checkImg"  v-on:click.stop="checkOne(index)">
+					</div>
+					<div class="iconImg">
+						<img class="iconImg" v-bind:src="item.iconImg" />
+					</div>
+					<div class="info">
+						<div class="name" v-cloak>
+							{{item.name}}
+							<div class="operation" v-bind:class="{'hide' : isEditShow}">
+								<div id="jian" v-bind:class="{'noneactive' : (item.num==0)}" v-on:click="jianClick(index,item.id)" v-bind:data-amount='item.num'>
+
+									-
+								</div>
+								<div id="count" class="count" v-bind:data-index="index" v-cloak>
+									{{item.num}}
+								</div>
+								<div id="jia" v-on:click="jiaClick(index,item.id)" v-bind:data-amount='item.num' class="jia">
+									+
+								</div>
+							</div>
+						</div>
+						<div class="tips"></div>
+						<div class="price">
+							<span v-cloak>￥{{item.price| money}}</span>
+							<span class="amount" v-cloak>x {{item.num}}</span>
+						</div>
+
+					</div>
+
+					<div v-bind:class="{'none' : isEditShow}" class="delete" v-on:click="deleteItem(index,item.id)">
+						<span>删除</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="bottom">
+				<div v-on:click.stop="checkAll()" class='check' >
+					<span> <img v-bind:src="allCheckedImg"  class="allCheckedImg"   />全选</span>
+				</div>
+				<div class="info" v-bind:class="{'disabled' : cost==0}">
+					<div v-bind:class="{costfont:cost!=0}" v-cloak> 合计：￥{{cost | money}} </div>
+					<div >不含运费 </div>
+				</div>
+				<div class="jiesuan" v-bind:class="{'disabled' : cost==0}"  v-on:click="gotoNext()" v-cloak> 结算({{selectCount}}) </div>
+			</div>
+		</div>
+		<div v-bind:class="{hide: inCartData.length>0}" >
+			<div class="empty-list">
+				<h2>购物车快饿瘪了T.T</h2>
+				<div class="des">快给我挑点宝贝</div>
+			</div>
+			<div class="go-homepage-btn">
+				<a href="../../index.html" target="_self">去逛逛</a>
+			</div>
+		</div>
+
+		</div>
+	</body>
+
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript" src='../../js/common/filter.js'></script>
+
+		<script type="text/javascript">
+			<!-- 页面加载完成需要执行的函数 -->
+			$(function() {
+			})
+
+			// 全局变量
+			let checkImg = '../../img/check.png';
+			let uncheckImg = '../../img/uncheck.png';
+			var self;
+			let openid;
+			new Vue({
+				el: '#gouwuche',
+				data: {
+					isEditShow: true,
+					allChecked: false,
+					allCheckedImg: '../../img/check.png',
+					cost: 0,
+					inCartData: [],
+					error: null
+				},
+				beforeCreate: function(){
+					openid = common.getOpenId();
+				},
+				created: function() {
+					self = this;
+					self.initCart();
+				},
+				computed :{
+				//计算结算购物车商品数量
+				 selectCount :function() {
+						let data = self.inCartData;
+						let count = 0;
+						let sum = 0;
+						for(var i = 0; i < data.length; i++) {
+							let num = parseInt(data[i].num);
+							if(data[i].isChecked ){
+								count += num;
+							}
+							sum += num;
+						}
+						if(sum == count){
+							self.allChecked= true;
+							self.allCheckedImg= self.allChecked ? checkImg : uncheckImg;
+						}else{
+							self.allChecked= false;
+							self.allCheckedImg= self.allChecked ? checkImg : uncheckImg;
+						}
+					return count;
+					}
+				},
+				methods: {
+			 //结算下一步
+			    gotoNext: function(){
+					location.href='../order/order.html?freightId='+1;
+			    },
+				//获取购物车数据
+					initCart:function(){
+						$.ajax({
+							type: "get",
+							url: baseUrl + '/buyer/cart/query',
+							data: {},
+							dataType: "json",
+							success: function(data) {
+								if(data.code != 200) {
+									$.alert(data.msg);
+									return;
+								  }else{
+								  	let cartData=data.data;
+								  	for(let i=0; i<cartData.length;i++){
+								  		let cart = cartData[i];
+								  		let tempCart ={};
+								  		tempCart.id=cart.id;
+								  		tempCart.name=cart.productName;
+								  		tempCart.iconImg=cart.productIcon;
+								  		tempCart.num=cart.productQuantity;
+								  		tempCart.price=cart.productPrice;
+								  		tempCart.isChecked= 1==cart.cartStatus?true:false;
+								  		tempCart.checkImg=tempCart.isChecked?"../../img/check.png":"../../img/uncheck.png";
+								  		self.inCartData.push(tempCart);
+								  	}
+									self.getCost();
+								  }
+								}
+							})
+					},
+				//显示编辑
+					editShow: function() {
+						self.isEditShow = !self.isEditShow;
+					},
+					//减数量
+					jianClick: function(index,id) {
+						let val = Number(self.inCartData[index].num);
+						if(1 == val)  return;
+						    $.ajax({
+								type: "get",
+								url: baseUrl + '/buyer/cart/decrease/' + id,
+								data: {},
+								dataType: "json",
+								success: function(data) {
+									if(data.code != 200) {
+										$.toast(data.msg);
+									  }else{
+										self.inCartData[index].num = val - 1;
+										 self.getCost();
+									  }
+									}
+							})
+					},
+					//全选
+					checkAll: function() {
+						let cart = self.inCartData;
+						$.ajax({
+							type: "get",
+							url: baseUrl + '/buyer/cart/chooseall',
+							data: {},
+							dataType: "json",
+							success: function(data) {
+								if(data.code != 200) {
+									$.alert(data.msg);
+									return;
+								  }else{
+									let flg = !self.allChecked;
+									self.allChecked = flg;
+									self.allCheckedImg = flg ? checkImg : uncheckImg;
+									let count=0;
+									for(let i = 0; i < cart.length; i++) {
+										cart[i].isChecked = flg;
+										cart[i].checkImg = flg ? checkImg : uncheckImg;
+										if(cart[i].isChecked ){
+											count += cart[i].num * cart[i].price;
+										}
+									}
+									self.cost=count;
+								  }
+								}
+							})
+					},
+					//加数量
+					jiaClick: function(index,id) {
+						let val = Number(self.inCartData[index].num);
+						    $.ajax({
+								type: "get",
+								url: baseUrl + '/buyer/cart/increase/' + id,
+								data: {},
+								dataType: "json",
+								success: function(data) {
+									if(data.code != 200) {
+										$.toast(data.msg);
+									  }else{
+										self.inCartData[index].num = val + 1;
+										 self.getCost();
+									  }
+									}
+							})
+					},
+					//选中一个
+					checkOne: function(index) {
+						let cart = self.inCartData;
+						$.ajax({
+							type: "get",
+							url: baseUrl + '/buyer/cart/choose/'+cart[index].id,
+							data: {},
+							dataType: "json",
+							success: function(data) {
+								if(data.code != 200) {
+									$.alert(data.msg);
+									return;
+								  }else{
+									let flg = !cart[index].isChecked;
+									cart[index].isChecked = flg;
+									cart[index].checkImg = flg ? checkImg : uncheckImg;
+									self.allChecked = false;
+									self.allCheckedImg = uncheckImg;
+									self.getCost();
+								  }
+								}
+							})
+					},
+					//统计结算金额
+					getCost: function() {
+						let data = self.inCartData;
+						let total=0;
+						for(var i = 0; i < data.length; i++) {
+								if(data[i].isChecked ){
+									total += (data[i].num * data[i].price);
+								}
+							}
+						self.cost = total;
+					},
+					//删除购物车
+					deleteItem:function(index,id){
+						$.modal({
+							  title: "",
+							  text: "确定要删除该商品么?",
+							  buttons: [
+								{ text: "取消", className: "default"},
+								{ text: "确认", onClick: function(){
+									let cartData = self.inCartData;
+									for(let i = 0; i < cartData.length; i++) {
+										if(i==index){
+										//删除购物车
+										$.ajax({
+												type: "get",
+												url: baseUrl + '/buyer/cart/delete/' + id,
+												data: {},
+												dataType: "json",
+												success: function(data) {
+													if(data.code != 200) {
+														$.toast(data.msg);
+													  }else{
+														$.toast("删除成功", "text");
+														 self.inCartData.splice(index,1);
+														 self.getCost();
+													  }
+													}
+											})
+										}
+									}
+								} }
+							  ]
+							});
+					}
+				},
+			})
+		</script>
+
+</html>

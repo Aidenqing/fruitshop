@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/order-list.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+		<title>我的订单</title>
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<style>
+			.item {
+				overflow: hidden;
+				margin-bottom: 5px;
+			}
+			
+			.item .tu {
+			
+				width: 30px;
+				flex-basis: 10%;
+			}
+			
+			.tu>img {
+				width: 100%;
+				height: 100%;
+			}
+			
+			.item .info {
+				flex-basis: 90%;
+				padding-left: 10px;
+			}
+			
+			.status {
+				display: flex;
+				justify-content: space-between;
+				font-size: 10px;
+				border-bottom: 1px solid #e1e1e1;
+				padding: 2px 0;
+			}
+			
+			.status>.use {
+				color: #3388FF;
+				border: #3388FF;
+				border: 1px solid #3388FF;
+				border-radius: 20px;
+				padding: 0 15px;
+				font-size: 8px;
+			}
+			
+			.value {
+				display: flex;
+			}
+			
+			.count {
+				font-size: 34px;
+				font-weight: bolder;
+			}
+			
+			.count span {
+				font-size: 16px;
+				font-weight: bold;
+			}
+			
+			.desc {
+				padding-left: 10px;
+				color: #8a8888;
+			}
+			
+			.desc>.name {
+				font-size: 14px;
+			}
+			
+			.desc>.man {
+				font-size: 12px;
+			}
+			
+			.desc>.time {
+				font-size: 10px;
+			}
+			
+			.status>.hide {
+				display: none;
+			}
+			.pull-right{float: right;}
+			.typeIcon{
+    			float: right;
+      			margin-right: -68px;
+			}
+			.choose-item{
+				display: flex;
+				margin-bottom: 10px;
+     			z-index: 100;
+    			position: fixed;
+     			background: white;
+     			width: 100%;
+			}
+			.coupon-items{
+     			 padding-top: 40px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="choose-item">
+				<div class="active" @click="itmeClick(-1)">
+					全部
+				</div>
+				<div  @click="itmeClick(0)">
+					待付款
+				</div>
+				<div  @click="itmeClick(1)">
+					待收货
+				</div>
+				<div  @click="itmeClick(2)">
+					已完成
+				</div>
+				<div  @click="itmeClick(3)">
+					已取消
+				</div>
+			</div>
+			<div class="coupon-items" v-bind:class="{hide: chooseData.length==0}" >
+				<div class="item" v-for="item in chooseData">
+						<li class="js-block-order block block-order animated">
+							<div class="header">
+							<div>
+								<a href="javascript:;"><span class="font-size-14">店铺：维喜多果园餐厅</span></a>
+								<a class="order-state-str pull-right font-size-14" href="javascript:;" v-cloak>{{item.paysStatusStr}}</a>
+							</div>
+							<div class="order-no font-size-12" v-cloak>订单编号：{{item.orderid}}</div>
+						</div>
+							<a class="name-card name-card-3col clearfix" href="javascript:;"  v-on:click="gotoDetail(item.orderid)">
+								<div class="thumb">
+									<img v-bind:src="item.orderDetailDTOS[0].productIcon">
+								</div>
+								<div class="detail">
+									<h3 class="font-size-14 l2-ellipsis" v-cloak>{{item.orderDetailDTOS[0].productName}}</h3>
+									<p class="order-types">
+										<button class="btn-order-type btn" v-cloak>{{item.statuStr}}</button>
+									</p>
+								</div>
+								<div class="right-col">
+									<div class="price c-black">¥<span v-cloak>{{item.orderDetailDTOS[0].productPrice}}</span></div>
+									<div class="num c-gray-darker">
+										×<span class="num-txt c-gray-darker" v-cloak>{{item.orderDetailDTOS[0].productQuantity}}</span>
+									</div>
+								</div>
+								<div class="typeIcon">
+									<img v-bind:src="item.typeIcon">
+								</div>
+							</a>
+							<div  v-bind:class="{hide: item.orderDetailDTOS.length-1 == 0}">
+								<a class="order-more center font-size-14" href="javascript:;" v-on:click="gotoDetail(item.orderid)" v-cloak>
+									查看全部{{item.orderDetailDTOS.length-1}}件商品
+								</a>
+							</div>
+							<hr class="margin-0">
+							<div class="bottom-price  has-bottom-btns">
+								<div class="pull-right"> 合计：
+									<span class="c-orange" v-cloak>¥{{item.orderAmount}}</span>
+
+								</div>
+							</div>
+							<div class="bottom">
+								<div class="opt-btn pull-right">
+
+									<a class="btn btn-default btn-in-order-list btn-orange c-white" href="javascript:;" v-for="btn in item.btns"><span v-on:click="btn.method" v-cloak>{{btn.btnName}}</span></a>
+
+								<!--	<a class="js-buy-again btn btn-default btn-in-order-list" href="javascript:;">再来一单</a>-->
+								</div>
+							</div>
+						</li>
+					
+				</div>
+			</div>
+
+			<div class="coupon-items" v-bind:class="{hide: chooseData.length > 0}" >
+				<div class="empty-list">
+					<h2>居然还没有订单T.T</h2>
+					<div class="des">好东西，手慢无</div>
+				</div>
+				<div class="go-homepage-btn">
+					<a href="../../index.html">去逛逛</a>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+            $(".choose-item>div").on('click', function(e) {
+                $(".choose-item>div").removeClass("active");
+                $(this).addClass("active");
+
+            });
+
+		})
+
+        function buynow (orderid) {
+            location.href=baseUrl + "/buyer/pay/create?orderId="+orderid+"&returnUrl="+baseUrl+"/fruitshop/main/order/pay_success.html?orderid="+orderid;
+        }
+
+        function cancel (orderid) {
+            $.confirm("您真的要取消该订单吗？", function() {
+                $.showLoading();
+                $.get(baseUrl+"/buyer/order/cancel/"+orderid,
+                    function (res) {
+                        if (res.code==200){
+                            $.hideLoading();
+                            location.reload()
+                        }
+                    });
+            }, function() {
+                $.toast("感谢您的手下留情", "text");
+            });
+
+        }
+
+        function express (courierFirm,trackingNumber) {
+		    location.href = "https://m.kuaidi100.com/index_all.html?type="+courierFirm+"&postid="+trackingNumber;
+        }
+        function confirm(orderid) {
+            $.confirm("请确认您收到的美食没有问题哦", function() {
+                $.showLoading();
+                $.get(baseUrl+"/buyer/order/myorder/confirm/"+orderid,
+                    function (res) {
+                        if (res.code==200){
+                            $.hideLoading();
+                            location.reload()
+                        }
+                    }
+                );
+            }, function() {
+                $.toast("美食如有问题请尽快联系我们的客服。", "text");
+            });
+
+
+
+
+        }
+        function gotoIndex (orderid) {
+
+		    location.href ="../../index.html";
+        }
+
+        function gotoPin (leaderId) {
+            location.href ="../groupbuy/join-detail.html?joinId="+leaderId;
+        }
+
+        function deleteOrder (orderid) {
+            $.confirm("您确认要删除此订单吗？", function() {
+                $.get(baseUrl+"/buyer/order/myorder/delete/"+orderid,
+                    function (res) {
+                        if (res.code==200){
+                            location.reload()
+                        }
+                    });
+            }, function() {
+                //点击取消后的回调函数
+            });
+
+
+        }
+
+
+
+		// 全局变量
+		var self;
+		let openid;
+		new Vue({
+			el: '#app',
+			data: {
+				chooseData:[],
+				couponData: [],
+
+				error: null
+			},
+			beforeCreate: function(){
+				openid=common.getOpenId();
+			},
+			created: function() {
+				self = this;
+				self.getCouponData();
+			},
+			methods: {
+				//跳转到详情页
+				gotoDetail: function(orderId) {
+					location.href="myorder-detail.html?orderid="+orderId;
+				},
+			//点击切换
+	    	itmeClick: function(val) {
+            	self.handleData(val);
+			},
+			//获取列表数据
+			handleData: function(val){
+					let chooseData = [];
+					let source = self.couponData;
+					for(var i = 0; i < source.length; i++) {
+						let item = eval(source[i]);
+						if(item.type==2){//团购
+							item.typeIcon="../../img/tuangou.png";
+
+						}else if(item.type==1){//外卖
+							item.typeIcon="../../img/waimai.png";
+
+						}else{//普通
+							item.typeIcon="";
+						}
+
+						if(0==item.payStatus){
+						 item.paysStatusStr='未支付';
+						}else if(1==item.payStatus){
+						 item.paysStatusStr='已支付';
+						}else if(2==item.payStatus){
+						 item.paysStatusStr='已退款';
+						}
+						if(0==item.payStatus &&item.orderStatus ==0){
+							item.statuStr='等待支付';
+							item.btns=[];
+							item.btns.push({'btnName':'立即支付','method':function(){buynow(item.orderid)}});
+							item.btns.push({'btnName':'取消订单','method':function(){cancel(item.orderid)}});
+						}else if(1==item.payStatus && item.orderStatus ==0 && item.sendStatus ==0 && item.type!=2){
+							item.statuStr='等待发货';
+							item.btns=[];
+							item.btns.push({'btnName':'取消订单','method':function(){cancel(item.orderid)}});
+						}else if(item.orderStatus==0 && item.payStatus==1 && item.groupStatus==0 && item.type==2){
+                            item.statuStr='等待拼团';
+                            item.btns=[];
+                            item.btns.push({'btnName':'爱拼才会赢','method':function(){gotoPin(item.leaderId)}});
+                        } else if(item.orderStatus==0 && item.payStatus==1 && item.groupStatus==2 && item.sendStatus ==0  && item.type==2){
+                            item.statuStr='拼团成功';
+                            item.btns=[];
+                            item.btns.push({'btnName':'取消订单','method':function(){cancel(item.orderid)}});
+                        }
+                        else if(item.orderStatus==0 && item.payStatus==1 && item.groupStatus==1 && item.type==2){
+                            item.statuStr='拼团失败';
+                            item.btns=[];
+                            item.btns.push({'btnName':'删除订单','method':function(){deleteOrder(item.orderid)}});
+                        } else if(1==item.sendStatus && item.orderStatus ==0 && item.payStatus ==1){
+							item.statuStr='已发货';
+							item.btns=[];
+							item.btns.push({'btnName':'查看物流','method':function(){express(item.courierFirm,item.trackingNumber)}});
+							item.btns.push({'btnName':'确认收货','method':function(){confirm(item.orderid)}});
+						}else if(1==item.orderStatus){
+							item.statuStr='已完成';
+							item.btns=[];
+							item.btns.push({'btnName':'再去逛逛','method':function(){gotoIndex(item.orderid)}});
+						}else if(2==item.orderStatus){
+							item.statuStr='已取消';
+							item.btns=[];
+							item.btns.push({'btnName':'再去逛逛','method':function(){gotoIndex(item.orderid)}});
+							item.btns.push({'btnName':'删除订单','method':function(){deleteOrder(item.orderid)}});
+						}else if(2==item.payStatus){
+							item.statuStr='已退款';
+							item.btns=[];
+							item.btns.push({'btnName':'再去逛逛','method':function(){gotoIndex(item.orderid)}});
+							item.btns.push({'btnName':'删除订单','method':function(){deleteOrder(item.orderid)}});
+						}else if(3==item.orderStatus){
+							item.statuStr='已关闭';
+							item.btns=[];
+							item.btns.push({'btnName':'再去逛逛','method':function(){gotoIndex(item.orderid)}});
+							item.btns.push({'btnName':'删除订单','method':function(){deleteOrder(item.orderid)}});
+						}
+						if(-1==val){
+							chooseData.push(item);
+                        }
+                        if(0===val && 0==item.payStatus && 0==item.sendStatus && 0==item.orderStatus){//待付款:等待支付
+							chooseData.push(item);
+						}
+						if(1==val && 1==item.payStatus && 0==item.orderStatus){//待收货
+							chooseData.push(item);
+
+                        }
+						if(2==val && 1==item.orderStatus && 2==item.sendStatus && 1==item.payStatus){//已完成
+							chooseData.push(item);
+
+						}
+						if(3==val && 2==item.orderStatus){//已取消
+							chooseData.push(item);
+						}
+					}
+					self.chooseData=chooseData;
+			},
+				getCouponData: function() {
+						$.showLoading();
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/order/myorders/list',
+						data: {},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+						$.hideLoading();
+							self.couponData = data.data;
+							self.handleData(-1);
+						}
+					});
+				},
+
+				
+			}
+		})
+	
+	</script>
+
+</html>

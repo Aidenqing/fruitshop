@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>维喜多外卖</title>
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script src="../../js/common/jquery.marquee.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<style>
+			.titleImg img {
+				width: 96%;
+				height: 100%;
+			}
+			
+			.titleImg {
+				text-align: center;
+				height: 250px;
+			}
+			
+			.product-itmes {
+				font-size: 14px;
+				margin: 0 5px;
+			}
+			
+			.product-itmes .iconImg img {
+				width: 96%;
+				border-radius: 5px;
+			}
+			
+			.product-itmes .item {
+				width: 50%;
+				display: inline-block;
+				text-align: center;
+			}
+			
+			.product-itmes .item>div {
+				margin: 5px;
+				background-color: white;
+				padding-top: 2px;
+				border-radius: 5px;
+			}
+			
+			.product-itmes .price {
+				display: flex;
+				justify-content: space-between;
+				margin: 3px 1px 5px 0;
+				font-size: 16px;
+				color: #f44;
+				padding: 0 2px;
+				padding-bottom: 5px;
+			}
+			
+			.product-itmes .name {
+				text-align: center;
+				height: 44px;
+				overflow: hidden;
+				color: black;
+			}
+			
+			.weui-cells {
+				font-size: 12px;
+			}
+			
+			.weui-panel__bd {
+				margin: 2px 5px;
+			}
+			
+			.cart-bottom {
+				position: fixed;
+				bottom: 0;
+				height: 50px;
+				width: 100%;
+				background: #848688;
+			}
+			
+			.cart-bottom img {
+				width: 40px;
+				height: 40px;
+				float: left;
+			}
+			
+			.jiesuan {
+				background: #f44;
+				position: fixed;
+				border-bottom: 0;
+				height: 50px;
+				right: 0;
+				bottom: 0;
+				line-height: 50px;
+				color: white;
+				font-size: 12px;
+				width: 80px;
+				text-align: center;
+			}
+
+			#condition {
+				position: fixed;
+				border-bottom: 0;
+				height: 50px;
+				right: 0;
+				bottom: 0;
+				line-height: 50px;
+				color: white;
+				font-size: 12px;
+				width: 80px;
+				text-align: center;
+			}
+			.weui-btn:after{
+				border: none;
+			}
+			.cart-bottom .icon {
+				position: absolute;
+				left: 40px;
+				background: white;
+				color: black;
+				border-radius: 50%;
+				height: 20px;
+				line-height: 20px;
+				width: 20px;
+				font-size: 8px;
+				border: 1px solid #f44;
+				z-index: 10;
+			}
+			.totalCost{
+				position: fixed;
+				border-bottom: 0;
+				height: 50px;
+				right: 0;
+				bottom: 0;
+				left: 80px;
+				color: white;
+				line-height: 27px;
+			}
+			.summary{
+				font-size: 14px;
+			}
+			.hasNum{
+			-webkit-filter: grayscale(1); /* Webkit */  
+			filter: grayscale(1);
+			}
+			.left-icon{
+				position: absolute;
+				text-align: center;
+				display: inline-block;
+				height: 22.5px;
+				min-width: 20px;
+				padding-top: 1px;
+				z-index: 1000;
+				float: left;
+				background-color: #fff7cc;
+			}
+			.left-icon img {
+				width: 16px;
+				height: 16px;
+			}
+			.marquee {
+				width: 94%;
+				overflow: hidden;
+				text-align: center;
+				background-color: #fff7cc;
+				color: #f85;
+				margin-left: 20px;
+			}
+		</style>
+	</head>
+
+	<body ontouchstart>
+		<div id="app">
+
+			<div class="content">
+				<div class="titleImg">
+					<img :src="shop.photo"/>
+				</div>
+				<div class="left-icon"><img src="../../img/guangbo.png"></div>
+				<div class='marquee' id="notice">
+				</div>
+				<div class="product-itmes">
+					<div class="item" v-for="(item,index) in products" v-cloak>
+						<div>
+							<a v-bind:href="item.href">
+								<div class="iconImg">
+									<img v-bind:src="item.productIcon" />
+								</div>
+								<div class="name" v-cloak>
+									{{item.productName}}
+								</div>
+							</a>
+
+							<div class="price">
+								<span id="" v-cloak>
+								￥{{item.productPrice}}
+							    </span>
+								<div class="weui-count">
+									<a class="weui-count__btn weui-count__decrease" v-show="item.incart>0" v-on:click="decreaseClick(index)"></a>
+									<input class="weui-count__number" type="number" disabled="disabled" v-bind:value="item.incart" v-show="item.incart>0" />
+									<a class="weui-count__btn weui-count__increase" v-on:click="increaseClick(index)"></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="erweima" style="padding-bottom: 30px;text-align: center;" v-show="guanzhu==0">
+				<img src="../../img/qr.jpg" style="width: 80%;height: 80%;">
+				<p style="padding-bottom: 10px;">扫一扫，享受更多优质服务！</p>
+			</div>
+			<br>
+			<br>
+			<br>
+			<br>
+			<div class="cart-bottom">
+				<a href="javascript:;" class="weui-btn  open-popup" style="border: none;margin-top: -8px;" data-target="#cart" v-show="self.totalCost>0">
+					<span  class="icon" v-show="self.totalCost>0" v-cloak>{{self.totalItme}}</span>
+					<img v-bind:class="{ hasNum: self.totalCost<=0 }" src="../../img/shop-menu-cart.png" />
+                </a>
+				<div id="condition" v-show="totalCost<=freight.fullCut" v-cloak>
+					满{{freight.fullCut}}元配送</div>
+				<div class="jiesuan"  v-on:click="gotoJiesuan()" v-show="totalCost>=freight.fullCut">去结算</div>
+				<div class="totalCost" style="width: 50%;" v-show="self.totalCost>0" v-cloak>
+					￥{{self.totalCost |money}}<br>
+					<p style="font-size: 10px;" v-cloak>另需配送费{{freight.freight  }}元</p>
+				</div>
+
+			<div id="cart" class='weui-popup__container popup-bottom'>
+				<div class="weui-popup__overlay"></div>
+				<div class="weui-popup__modal">
+					<div class="toolbar" v-show="self.totalCost>0">
+						<div class="toolbar-inner">
+							<a href="javascript:;" class="picker-button close-popup">关闭</a>
+							<h1 class="title">我的购物车</h1>
+						</div>
+					</div>
+					<div class="modal-content">
+						<div class="weui-cells">
+							<div class="weui-cell weui-cell_swiped" v-for="(item,index) in products" v-show="item.incart>0">
+								<div class="weui-cell__bd">
+									<div class="weui-cell">
+										<div class="weui-cell__hd"><img v-bind:src="item.productIcon" alt="" style="width:40px;margin-right:5px;display:block"></div>
+										<div class="weui-cell__bd">
+											<p v-cloak>{{item.productName}}</p>
+										</div>
+										<div class="weui-cell__ft">
+											<span style="padding-right: 10px;color: red;" v-cloak>￥{{item.productPrice}}</span>
+											<div class="weui-count">
+												<a class="weui-count__btn weui-count__decrease" v-on:click="decreaseClick(index)"></a>
+												<input class="weui-count__number" type="number" v-bind:value="item.incart" />
+												<a class="weui-count__btn weui-count__increase" v-on:click="increaseClick(index)"></a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="weui-cell__ft">
+									<a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout" href="javascript:">删除</a>
+									<a class="weui-swiped-btn weui-swiped-btn_default close-swipeout" href="javascript:">关闭</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<p class="summary" v-show="self.totalCost>0" v-cloak style="margin-left: 20px;">
+						{{self.totalItme}} 件商品, 共计 <strong v-cloak style="color: red;">{{self.totalCost |money}}</strong> 元
+					</p>
+				</div>
+			</div>
+		</div>
+		</div>
+	</body>
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript" src='../../js/common/filter.js'></script>
+	<script type="text/javascript">
+	
+		$(function() {
+		});
+
+        Math.formatFloat = function (f, digit) {
+            var m = Math.pow(10, digit);
+            return parseInt(f * m, 10) / m;
+        };
+
+		// 全局变量
+		var self;
+		let openid;
+		let shopId;
+        new Vue({
+			el: '#app',
+			data: {
+				products: [],
+				shop: {},
+				freight:{},
+				totalCost: 0,
+				totalItme: 0,
+				freightId:'',
+				guanzhu:1,
+				error: null
+			},
+			beforeCreate: function() {
+				openid=common.getOpenId();
+			    shopId = common.getUrlParam("shopId");
+
+
+			},
+			created: function() {
+				self = this;
+                self.getIncartData();
+                self.isguanzhu();
+                self.share();
+                self.getNotice();
+			},
+			methods: {
+                getNotice:function () {
+                    $.get(baseUrl+"/buyer/module/notice/2",
+                        function (res) {
+                            if(res.code==200){
+                                $("#notice").html(res.data[0].notice);
+                                $('.marquee').marquee({
+                                    duration: 5000
+                                });
+                            }
+                        });
+                },
+				//结算
+				 gotoJiesuan: function() {
+				 	location.href="order.html?shopId="+shopId+"&freightId=" + self.freightId;
+				 },
+				//获取在购物车的数据 id num
+				getIncartData: function(){
+                    $.showLoading();
+                    $.ajax({
+                        type: "get",
+                        url: baseUrl + '/buyer/shop/menu/' + shopId,
+                        data: {},
+                        dataType: "json",
+                        success: function(data) {
+                            if(data.code == 200) {
+                                self.shop = data.data[0].branchShopVO;
+                                self.freight = data.data[0].branchShopVO.freight;
+                                self.freightId= self.freight.id;
+                                let products = data.data[0].products;
+
+                                for (let i=0;i<products.length;i++){
+                                    products[i].incart = 0;
+                                }
+                                $.get(baseUrl+"/buyer/branchShoppingCart/getMyCart/"+shopId,
+                                    function (res) {
+                                        let cart = res.data;
+                                        let cost = 0;
+                                        for (let i=0;i<products.length;i++){
+                                            for (let j=0;j<cart.length;j++){
+                                                if(products[i].id == cart[j].productId){
+                                                    products[i].incart = cart[j].productQuantity;
+                                                    self.totalItme +=cart[j].productQuantity;
+                                                    cost += cart[j].productPrice * cart[j].productQuantity;
+                                                }
+                                            }
+                                        }
+                                        self.totalCost = cost;
+                                        self.products = products;
+                                    });
+                            }
+                        }
+                    });
+                    self.share();
+                    $.hideLoading();
+
+
+                },
+				decreaseClick: function(index) {
+					if(self.products[index].incart <= 0) {
+						self.products[index].incart = 0;
+						return;
+					}
+					let number = parseInt(self.products[index].incart) - 1;
+					self.products[index].incart = number;
+					self.totalItme -= 1;
+					self.totalCost -= self.products[index].productPrice;
+					$.get(baseUrl+"/buyer/branchShoppingCart/decrease/"+shopId+"/"+self.products[index].id);
+
+				},
+                isguanzhu:function () {
+                    $.get(baseUrl+"/buyer/vipMember/isgaunzhu",
+                        function (res) {
+                            if(res.code==200){
+                                if(res.data.length==0){
+                                    self.guanzhu = 0;
+                                }
+                            }
+
+                        });
+                },
+                share:function () {
+                    $.get(baseUrl+"/wechat/sdk/getSignature?url="+window.location.href,
+                        function (res) {
+                            if(res.code==200){
+                                //权限验证信息
+                                wx.config({
+                                    debug: false,
+                                    appId: res.data[0].appId,
+                                    timestamp: res.data[0].timestamp,
+                                    nonceStr: res.data[0].nonceStr,
+                                    signature: res.data[0].signature,
+                                    jsApiList: [
+                                        // 所有要调用的 API 都要加到这个列表中
+                                        'onMenuShareAppMessage' //  分享到朋友接口
+                                    ]
+                                });
+                                wx.ready(function () {
+                                    // 微信分享的数据
+                                    var shareData = {
+                                        "imgUrl": self.shop.photo,    // 分享显示的缩略图地址  ----要添加！！！
+                                        "link": window.location.href,    // 分享地址
+                                        "desc": "点外卖，来这里，同城配送，服务到家！",   // 分享描述
+                                        "title": self.shop.name,   // 分享标题
+                                        success: function () {
+                                            //分享成功后做相应的数据处理
+                                            if (openid!=""){
+                                                $.get(
+                                                    baseUrl + '/wechat/sdk/shareSuccess/'+openid,
+                                                    function (content) {
+
+                                                    }
+                                                )
+                                            }else {
+                                                alert("亲爱的果友，您还未授权或者未关注我们，所以不能领取分享奖励哦！")
+                                            }
+
+                                        }
+                                    };
+                                    wx.onMenuShareAppMessage(shareData);
+                                });
+                                wx.error(function (res) {
+                                })
+                            }
+                        });
+                },
+
+				increaseClick: function(index) {
+
+					let number = parseInt(self.products[index].incart) + 1
+					self.products[index].incart = number;
+					self.totalItme += 1;
+                    self.totalCost += self.products[index].productPrice;
+
+					let data ={
+					    "shopId":shopId,
+						"productId":self.products[index].id,
+						"productName":self.products[index].productName,
+						"productPrice":self.products[index].productPrice,
+						"productIcon":self.products[index].productIcon,
+						"productQuantity":1
+					};
+                    $.ajax({
+                        type:'post',
+                        contentType:'application/json;charset=UTF-8',
+                        url:baseUrl+"/buyer/branchShoppingCart/increase",
+                        data:JSON.stringify(data),
+                        dataType:'json'
+                    });
+
+				}
+			}
+		})
+	</script>
+
+</html>

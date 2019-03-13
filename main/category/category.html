@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>全部分类</title>
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<!--   通用 -->
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<script type="text/javascript" src="js/common/swiper.jquery.min.js"></script>
+		<style>
+			.category-items {
+				background-color: #e8e8e8;
+			}
+
+			.category-items .item {
+				background: white;
+			}
+
+			.mainname {
+				text-align: center;
+				font-size: 18px;
+				padding: 10px 0;
+				color: #9CCE72;
+			}
+
+			.iteminfo {
+				margin: 0 3px;
+			}
+
+			.iteminfo div {
+				display: inline-block;
+				width: 49%;
+				margin: 2px 0.5%;
+			}
+
+			.sitem .name {
+
+
+				text-align: center;
+				color: black;
+			}
+
+			.iteminfo img {
+				width: 80%;
+				height: 80%;
+				border-radius: 5px;
+				-webkit-box-shadow: 0 0 13px #393e4a;
+				-moz-box-shadow: 0 0 13px #393e4a;
+				box-shadow: 0 0 13px #393e4a;
+			}
+
+			.sitem a {
+				display: block;
+				width: 100%;
+				height: 100%;
+				text-align: center;
+				position: relative;
+			}
+
+			.mainname span {
+				color: #C4C4C4;
+				font-size: 10px;
+				line-height: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="category">
+			<div class="weui-search-bar" id="searchBar">
+				<form class="weui-search-bar__form">
+					<div class="weui-search-bar__box">
+						<i class="weui-icon-search"></i>
+						<input type="search" class="weui-search-bar__input" id="searchInput" placeholder="搜索" required="">
+						<a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+					</div>
+					<label class="weui-search-bar__label" id="searchText">
+      <i class="weui-icon-search"></i>
+      <span>搜索商品</span>
+    </label>
+				</form>
+				<a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+			</div>
+
+			<div class="category-items">
+				<div id="item" v-for="(item,index) in categoryData" v-cloak>
+					<div class="mainname" v-cloak>
+						<span>|||||||||</span>{{item.mainName}}<span>|||||||||</span>
+					</div>
+					<div class="iteminfo">
+
+						<div class="sitem" v-for="iteminfo in item.categoryItems">
+
+							<a v-bind:href="iteminfo.href">
+
+								<img v-bind:src="iteminfo.iconImg">
+								<div class="name" v-cloak>
+									{{iteminfo.name}}
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</body>
+
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+
+	<script type="text/javascript">
+		<!-- 页面加载完成需要执行的函数 -->
+		$(function() {
+			//初始化轮播图
+
+			//$("#add-shopcart").popup();
+		})
+
+		// 全局变量
+		var self;
+
+		var vm = new Vue({
+			el: '#category',
+			data: {
+				categoryData: [
+
+				],
+				error: null
+			},
+			beforeCreate: function(){
+			},
+			created: function() {
+				self = this;
+				self.getCategoryData();
+			},
+			methods: {
+				getCategoryData: function() {
+					$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/category/all',
+						data: {
+
+						},
+						dataType: "json",
+						success: function(data) {
+
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let categoryData = [];
+							let source = data.data;
+							for(let i = 0; i < source.length; i++) {
+
+								let eledata = {};
+								eledata['mainName'] = source[i].mainName;
+
+								let categoryItems = [];
+								let items = source[i].productCategoryVOList;
+								for(let j = 0; j < items.length; j++) {
+									let category = {};
+									category['name'] = items[j].categoryName;
+									category['iconImg'] = items[j].categoryImg;
+									category['href'] = baseCatagoryHref + items[j].id;
+									categoryItems.push(category);
+								}
+								eledata['categoryItems'] = categoryItems;
+								categoryData.push(eledata);
+							}
+							self.categoryData = categoryData;
+						}
+					});
+				},
+			}
+		})
+
+		var category = {
+
+			addtoShopCart: function(val) {
+				$(".shopcart").on('click', function(e) {
+
+					$("#add-shopcart").popup();
+				});
+			},
+
+		}
+	</script>
+
+</html>

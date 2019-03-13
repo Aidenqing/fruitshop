@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="email=no" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+    <link rel="stylesheet" href="../../css/weiui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+    <link rel="stylesheet" href="../../css/swiper.min.css" />
+    <link rel="stylesheet" href="../../css/public.css" />
+    <title>分销首页</title>
+
+    <script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+    <script type="text/javascript" src="../../js/common/vue.min.js"></script>
+    <script type="text/javascript" src="../../js/common/common.js"></script>
+    <script src="../../js/common/jweixin-1.2.0.js"></script>
+    <script type='text/javascript' src="../../js/api-url.js"></script>
+    <style>
+
+
+   .bg{
+    	width: 32rem;
+position: relative;
+    }
+    .bg>img{
+        width: 100%;
+    }
+.bottom{
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	background: white;
+	border-top: 1px solid #CCCCCC;
+	padding: 5px 0;
+	color: black;
+}
+.bottom>img{
+	height: 36px;
+	width: 36px;
+	vertical-align: middle;
+	margin: 0 5px;
+}
+    </style>
+</head>
+
+<body>
+    <div id="app">
+    	<div class="bg">
+            <img src="../../img/enlist.jpg"/>
+        </div>
+        <div class="bg">
+            <img src="../../img/guide.jpg"/>
+        </div>
+        <div   class="bottom" id="bottom">
+        	<img  src="../../img/user.png"/>
+            <span v-on:click="becomeDistributor()">成为分销员</span>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+<script type="text/javascript">
+    <!-- 页面加载完成需要执行的函数 -->
+    $(function() {
+            $.get(baseUrl+"/buyer/distributor/one",
+                function (res) {
+                    var str ='<img  src="../../img/user.png"/>'
+                    if (res.data.length > 0){
+                        str += '<a href="distribution.html">进入我要推广</a>'
+                        $("#bottom").html(str)
+                    }
+                });
+        //$("#add-shopcart").popup();
+    });
+
+    // 全局变量
+    var self;
+    let openid;
+    new Vue({
+        el: '#app',
+        data: {
+            ok: '',
+            img:'',
+            error: null
+        },
+        beforeCreate: function() {
+            openid = common.getOpenId();
+
+        },
+        created: function() {
+            self = this;
+        },
+        methods: {
+            becomeDistributor:function () {
+                $.get(baseUrl + '/buyer/vipMember/info',
+                    function (res) {
+                    if (typeof (res.data[0].phone)=="undefined"){
+                        $.toast("请先完善您的会员信息，比如手机号。",function () {
+                            location.href = '../my/myinfo.html';
+
+                        });
+                    }else {
+                        $.get(baseUrl+"/buyer/distributor/become",
+                            function (res) {
+                            if (res.code==200){
+                                $.toast("恭喜你成为分销员",function() {
+                                    location.href="distribution.html";
+                                });
+                            }else {
+                                $.toast("操作失败", "cancel");
+                            }
+
+                        })
+                    }
+
+                })
+
+            }
+
+
+        }
+    })
+
+</script>
+
+
+</html>

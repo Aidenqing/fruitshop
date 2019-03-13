@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-control" content="no-cache">
+		<meta http-equiv="Cache" content="no-cache">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="format-detection" content="email=no" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+		<meta http-equiv="Page-Enter" content="revealTrans(Duration=5.0,Transition=2)" />
+		<title>待付款的订单</title>
+		<link rel="stylesheet" href="../../css/weiui.min.css" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/detail.css">
+		<link rel="stylesheet" type="text/css" href="../../css/jquery-weui.min.css">
+		<link rel="stylesheet" href="../../css/swiper.min.css" />
+		<link rel="stylesheet" href="../../css/public.css" />
+
+		<script type="text/javascript" src="../../js/common/jquery-2.1.0.js"></script>
+		<script type="text/javascript" src="../../js/common/vue.min.js"></script>
+		<script type="text/javascript" src="../../js/common/common.js"></script>
+		<script src="../../js/common/jweixin-1.2.0.js"></script>
+		<script type='text/javascript' src="../../js/api-url.js"></script>
+		<script type="text/javascript" src="../../js/common/swiper.jquery.min.js"></script>
+		<style>
+			body {
+				background: whitesmoke;
+			}
+			.inCart-items .item {
+				display: flex;
+				font-size: 14px;
+				align-items: center;
+				position: relative;
+     			margin-top: 6px;
+			}
+			.item {
+				background: white;
+				margin-bottom: 2px;
+				padding-top: 0px;
+			}
+			.edit {
+				text-align: right;
+				padding: 0.5rem 1rem;
+				align-items: center;
+				background: #f8f8f8;
+				justify-content: space-between;
+				font-size: 14px;
+			}
+			.edit img {
+				width: 20px;
+				height: 20px;
+				vertical-align: middle;
+				padding-right: 10px;
+			}
+			.item .gouxuan {
+				flex-basis: 17%;
+			}
+			
+			.item .iconImg {
+				flex-basis: 34%;
+				margin-left: 13px;
+			}
+			
+			.item .iconImg img {
+				width: 7rem;
+				height: 7rem;
+			}
+			
+			.item .info {
+				flex-basis: 56%;
+				position: relative;
+			}
+			
+			.info .name {
+				height: 48px;
+				overflow: hidden;
+				position: relative;
+			}
+			
+			.info .price {
+				color: red;
+				font-size: 14px;
+				display: flex;
+				justify-content: space-between;
+				margin-right: 1rem;
+			}
+			
+			.info .tips {
+				color: #9B9B9B;
+				height: 26px;
+				overflow: hidden;
+				margin-bottom: 5px;
+				font-size: 14px;
+			}
+			
+			.item .weui-cells {
+				background-color: #f8f8f8;
+				margin: 0;
+			}
+			
+			.item .weui-cell {
+				padding: 0;
+			}
+			
+			.item .weui-cells:after,
+			.item .weui-cells:before {
+				border: none;
+				background-color: #f8f8f8;
+			}
+			
+			.weui-check__label:active {
+				background-color: #f8f8f8;
+			}
+			.operation {
+				right: 0rem;
+				background-color: #f8f8f8;
+				height: 100%;
+				width: 100%;
+				top: 5px;
+			}
+			.amount {
+     			color: #666;
+				font-size: 14px;
+     			float: right;
+     			line-height: 20px;
+			}
+			.bottom>div {
+				position: fixed;
+				bottom: 0;
+				text-align: center;
+				height: 46px;
+				line-height: 46px;
+			}
+			.bottom .info {
+				right: 60%;
+     			font-weight: bold;
+				font-size: 14px;
+     			padding-right: 12px;
+			}
+			.bottom .info>div{
+				height: 23px;
+			}
+			.bottom .check {
+				padding-left: 1rem;
+			}
+			.bottom .jiesuan {
+				right: 0;
+				width: 30%;
+				background: #f44;
+     			color: #fff;
+			}
+			.bottom .jiesuaned {
+				right: 0;
+				width: 30%;
+				background: #999;
+     			color: #fff;
+			}
+			.cell_title{
+				margin-left: 27px;
+				height:36px;
+				flex-basis: 20%;
+			}
+			.cell_value{
+				flex-basis: 71%;
+				height:40px;
+			}
+			.cell_title2{
+     			margin-right: 20px;
+				flex-basis: 81%;
+				text-align: left;
+			}
+			.cell_value2 span{
+				margin-right: 15px;
+			}
+			.cell_value span{
+				float:right;
+				margin-right: 25px;
+			}
+			.cell_value i,.cell_value2 i{
+			    content: " ";
+			    color: #999;
+			    line-height:6px;
+			    display: inline-block;
+			    margin-left: 5px;
+			    border-style: solid;
+			    position: relative;
+			    border-width: 2px 2px 0 0;
+			    height: 6px;
+			    width: 6px;
+			    transform: rotate(45deg);
+			}
+			.line{
+				width:100%;
+				border-bottom: 1px solid #e5e5e5;
+			}
+			.bottom {
+				position: fixed;
+				bottom: 0;
+				height: 46px;
+				border-top: 1px solid #e5e5e5;
+				width: 100%;
+				font-size: 14px;
+				background-color: #f8f8f8;
+			}
+			.costfont{
+				color: #f44;
+			}
+			.bottom img {
+			    width: 20px;
+    			height: 20px;
+				vertical-align: middle;
+				margin-right: 5px;
+			}
+			.addimg{
+				position: relative;
+				padding: 16px 10px 16px 60px;
+				line-height: 40px;
+				font-size: 14px;
+				color: #333;
+				background: url(https://img.yzcdn.cn/v2/image/wap/address/add@2x.png) 10px/40px 40px no-repeat;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div id="orderlist" v-cloak>
+			<div class="inCart-items" style="min-height: 600px;" >
+				<div class="item" style="border-bottom: 1px solid #e5e5e5;height: 60px;"   v-bind:class="{hide: addressData==null}">
+					<div class="item" style="width: 100%;padding: 10px 10px 10px 20px"  v-on:click="gotoAddAddr()">
+						<div class="cell_title2">
+							<span><i class="van-icon van-icon-location"></i>收货人：{{addressData.consignee}} {{addressData.phone}} </span><br>
+							<span>收货地址：{{addressData.address}} </span>
+						</div>
+					</div>
+				</div>
+				<div class="edit" style="border-bottom: 1px solid #e5e5e5;"   v-bind:class="{hide: addressData !=null}">
+					<div class="item" style="width: 100%;"  v-on:click="gotoAddAddr()">
+						<div class="addimg cell_title2" >
+							<span>新建收货地址</span>
+						</div>
+						<div class="cell_value2">
+							<span><i></i></span>
+						</div>
+					</div>
+				</div>
+				<div class="line"  style="content: '';margin-bottom: 10px;display: block;height: 3px;background: repeating-linear-gradient( -45deg, #ff6c6c 0, #ff6c6c 20%, transparent 0, transparent 25%, #3283fa 0, #3283fa 45%, transparent 0, transparent 50% );background-size:106px;"  ></div>
+				<div class="cap-order-goods-header van-cell">
+					<div class="van-cell__value van-cell__value--alone">
+						<i class="van-icon van-icon-shop"></i><a href="javscript:;" style="font-size: 14px;color: #333;">店铺：维喜多果园餐厅</a>
+					</div>
+				</div>
+				<div class="item" v-for="(item,index) in inCartData" style="background: #fcfcfd">
+					<div class="iconImg">
+						<img class="iconImg" v-bind:src="item.iconImg" />
+					</div>
+					<div class="info">
+						<div class="name">
+							{{item.name}}
+							<span style="float: right;">￥{{item.price| money}}</span>
+						</div>
+						<div class="tips">
+							<span class="amount">x {{item.num}}</span>
+						</div>
+					</div>
+				</div>
+				<div class="item line">
+					<div class="cell_title">
+						<span>配送方式</span>
+					</div>
+					<div class="cell_value" style="height: 52px;">
+						<span>{{freightName}} <br/>普通快递</span>
+					</div>
+				</div>
+				<div class="item line">
+					<div class="cell_title">
+						<span>买家留言：</span>
+					</div>
+					<div class="cell_value" style="height: 52px;">
+						<textarea id="buyerMessage"  class="weui-textarea" placeholder="您的留言使我们的服务更周到" rows="2" style="margin: 8px 4px;height:80%;width:95%;"></textarea>
+					</div>
+				</div>
+				<div class="item">
+					<div class="cell_title">
+						<span>商品金额</span>
+					</div>
+					<div class="cell_value"  style="color:red">
+						<span>￥{{cost| money}}</span>
+					</div>
+				</div>
+				<div class="item">
+					<div class="cell_title">
+						<span>运费</span>
+					</div>
+					<div class="cell_value" style="color:red">
+						<span>￥{{freight| money}}</span>
+					</div>
+				</div>
+				<br/><br/><br/><br/><br/>
+			</div>
+
+			<div class="bottom" style="background-color: white">
+				<div class="info">
+					<div style="color:red"> 应付金额：￥{{cost+freight | money}} </div>
+				</div>
+				<div class="jiesuan"  v-on:click.stop="createOrder()"> 提交订单 </div>
+			</div>
+
+		</div>
+	</body>
+
+	<script type="text/javascript" src='../../js/common/jquery-weui.min.js'></script>
+	<script type="text/javascript" src='../../js/common/filter.js'></script>
+
+		<script type="text/javascript">
+		function formatMoney(val){
+				val = val.toString().replace(/\$|\,/g,'');
+				if(isNaN(val)) {
+				  val = "0";
+				}
+				let sign = (val == (val = Math.abs(val)));
+				val = Math.floor(val*100+0.50000000001);
+				let cents = val%100;
+				val = Math.floor(val/100).toString();
+				if(cents<10) {
+				   cents = "0" + cents
+				}
+				for (var i = 0; i < Math.floor((val.length-(1+i))/3); i++) {
+					val = val.substring(0,val.length-(4*i+3))+',' + val.substring(val.length-(4*i+3));
+				}
+
+				return (((sign)?'':'-') + val + '.' + cents);
+		}
+			// 全局变量
+			var self;
+			let openid;
+			let pid;
+			let gid;
+			let lid;
+			let gprice;
+			let pnum;
+			let addressid;
+			let freightId;
+			new Vue({
+				el: '#orderlist',
+				data: {
+					cost: 0,
+					inCartData: [],
+					addressData:{},
+					freight:0,
+					freightName:'',
+					fullCut:0,
+					orderId:'',
+					error: null
+				},
+				beforeCreate: function(){
+					openid = common.getOpenId();
+					let tmpid=common.getUrlParam("pid");
+					pid = tmpid?tmpid:'';
+
+                    let freightid=common.getUrlParam("freightId");
+                    freightId = freightid?freightid:'';
+
+                    let groupId=common.getUrlParam("groupId");
+                    gid = groupId?groupId:'';
+
+                    let leaderId=common.getUrlParam("leaderId");
+                    lid = leaderId?leaderId:'';
+
+                    let groupprice=common.getUrlParam("groupPrice");
+                    gprice = groupprice?groupprice:'';
+
+					let tmpnum=common.getUrlParam("pnum");
+					pnum =tmpnum?tmpnum:'';
+					let tmpaddressid=common.getUrlParam("addressid");
+					addressid = tmpaddressid?tmpaddressid:'';
+				},
+				created: function() {
+					self = this;
+					self.getDefalutAddress();
+					self.initProduct(pid,gprice,pnum);
+				},
+				computed :{
+				},
+				methods: {
+				wxpay:function(){
+
+				},
+				//初始化运费
+				initFreight:function(){
+					 $.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/freight/choose/' +freightId+'/' +self.cost,
+						data: {},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let freightData=data.data[0];
+							freightId=freightData.id;
+							self.freightName=freightData.name;
+							self.fullCut=freightData.fullCut;
+							self.freight=freightData.freight;
+							}
+						 })
+				},
+				//跳转到选择收货地址
+				gotoAddAddr:function(){
+					location.href="order-address.html?pid="+pid+"&pnum="+pnum+"&addressid="+addressid+"&groupPrice="+gprice+"&groupId="+gid+"&leaderId="+lid+"&freightId="+freightId;
+				},
+				//获取默认的地址
+				getDefalutAddress:function(){
+					if('null'==addressid || ''==addressid){
+					 $.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/address/findByChecked',
+						data: {},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+								let dd = data.data;
+								if(null!=dd && dd.length>0){
+									self.addressData = dd[0];
+								}
+							}
+						 })
+					}else{
+					 $.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/address/findOne/' + addressid,
+						data: {},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+								let dd = data.data;
+								if(null!=dd && dd.length>0){
+                                    self.addressData = dd[0];
+								}
+							}
+						 })
+					}
+				},
+                showPayMethod:function(orderid){
+                        $.actions({
+                            actions:[{
+                                text:"微信支付",
+                                onClick:function () {
+                                    location.href=baseUrl + "/buyer/pay/create?orderId="+orderid+"&returnUrl="+wxUrl+"/fruitshop/main/order/pay_success.html?orderid="+orderid;
+                                }
+                            }]
+                        });
+				},
+				//创建订单
+				createOrder:function(){
+                    if(!self.addressData.consignee){
+                        $.toast("收货地址不能为空", "text");
+                        setTimeout("self.gotoAddAddr()",1000);
+                        return;
+                    }
+
+                    if(self.inCartData.length == 0){
+                        $.toast("商品被妖怪偷走了，请返回重新下单！", 1000);
+                        return;
+
+                    }
+					if(''==self.orderId){
+					    $.showLoading();
+                        let param={};
+                        param.leaderId = lid;
+                        param.groupbuyId = gid;
+                        param.address=self.addressData.consignee+','+self.addressData.phone+','+self.addressData.address;
+                        param.buyerMessage=$("#buyerMessage").val();
+                        param.freightId=freightId;
+                        param.orderDetailDTOS=[];
+                        for(let i=0;i<self.inCartData.length;i++){
+                            let product=self.inCartData[i];
+                            let temp={};
+                            temp.productId=product.id;
+                            temp.productQuantity=product.num;
+                            console.log(temp.productQuantity);
+                            param.orderDetailDTOS.push(temp);
+                        }
+                        $.ajax({
+                            type: "post",
+                            url: baseUrl + '/buyer/order/create_group',
+                            data: JSON.stringify(param),
+                            dataType:"json",
+                            contentType:"application/json;charset=UTF-8",
+                            success: function(data) {
+                                if(data.code == 200) {
+                                    let orderid = data.data[0].orderid;
+                                    self.orderId=data.data[0].orderid;
+                                    self.showPayMethod(orderid);
+                                    $.hideLoading();
+                                }else {
+                                    toast(data.msg,1000);
+								}
+                            }
+                        })
+
+					}
+
+				},
+				//初始化页面显示数据
+					initProduct:function(pid,groupprice,pnum){
+						$.ajax({
+						type: "get",
+						url: baseUrl + '/buyer/product/detail/' + pid,
+						data: {},
+						dataType: "json",
+						success: function(data) {
+							if(data.code != 200) {
+								$.alert(data.msg);
+								return;
+							}
+							let source = data.data[0];
+							let sliderData = [];
+							let sliderOrigin = source.productImgDTOS;
+							for(var i = 0; i < sliderOrigin.length; i++) {
+								let slider = {};
+								slider['imgurl'] = sliderOrigin[i].imgUrl;
+								sliderData.push(slider);
+							}
+							self.sliderData = sliderData;
+							let product = {};
+							product['id'] = source.id;
+							product['name'] = source.productName;
+							product['sname'] = source.productName.length>15?(source.productName.substring(0,15)+'...'):source.productName;
+							product['iconImg'] = source.productIcon;
+							product['price'] = groupprice;
+							product['num']=pnum;
+						    self.inCartData.push(product);
+							self.getCost();
+						    }
+						 })
+					},
+					//统计结算金额
+					getCost: function() {
+						let data = self.inCartData;
+						let total=0;
+						for(var i = 0; i < data.length; i++) {
+								let num = parseInt(data[i].num);
+								total += num * data[i].price;
+							}
+						self.cost = total;
+						self.initFreight();
+					},
+				}
+			})
+		</script>
+
+</html>
